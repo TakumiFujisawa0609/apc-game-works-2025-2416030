@@ -19,6 +19,7 @@ public:
 
 	constexpr static float GRAVITY = 0.5f;
 
+	constexpr static float CIRCLE_RADIUS = 80.0f;
 
 
 	// コンストラクタ
@@ -41,6 +42,8 @@ private:
 	float powdddd = 20.0f;
 
 	float lightPow_ = 0.0f;
+
+	bool isBound_ = false;
 
 	// 移動方向
 	VECTOR moveDir_;

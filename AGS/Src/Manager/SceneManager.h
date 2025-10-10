@@ -54,8 +54,11 @@ public:
 
 	Camera& GetCamera(void) const{ return *camera_; }
 
-	void SetPointLightPos(float posz, float posx) { pointLightPos_.z = posz; pointLightPos_.x = posx; }
-	//void SetPointLightPos(float pow) { lightPow_ -= 0.001f; }
+	void SetPointLightPos(VECTOR pos)
+	{
+		pointLightPos_ = pos;
+	}
+	void IsPointLightPow() { lightPow_ = 0.0001f; }
 
 private:
 

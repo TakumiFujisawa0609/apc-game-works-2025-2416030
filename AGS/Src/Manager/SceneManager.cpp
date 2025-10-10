@@ -60,15 +60,17 @@ void SceneManager::Init3D(void)
 	SetWriteZBuffer3D(true);
 
 	// バックカリングを有効にする
-	SetUseBackCulling(true);
+	SetUseBackCulling(false);
 
 	// ライトの設定
-	//SetUseLighting(true);
+	SetUseLighting(TRUE); // ← これを有効に！
+	SetLightEnable(TRUE); // ← これもセットで！
 
 	// ディレクショナルライト方向の設定（正規化されてなくてもいい）
 	// 正面から斜め下に向かったライト
 	//ChangeLightTypeDir({ 0.00f, -1.00f, 1.00f });
 
+#if 1
 #pragma region Step1 ポイントライト
 	int lightID = -1;
 
@@ -78,17 +80,20 @@ void SceneManager::Init3D(void)
 
 	lightID = ChangeLightTypePoint(pointLightPos_, 400.0f, 0.000f, 0.001f, 0.000f);
 	SetLightEnable(true);
+
 #pragma endregion
+#else
 #pragma region Step2 スポットライト
-	/*spotLightPos_ = { 500.0f, 300.0f, 45.0f };
+	spotLightPos_ = { 500.0f, 300.0f, 45.0f };
 	ChangeLightTypeSpot(
 		spotLightPos_,
 		{ 0.0f, 0.0f, 1.0f },
 		360.0f * DX_PI_F / 180.0f,
 		0.0f * DX_PI_F / 180.0f,
 		200.0f,
-		0.000f, 0.001f, 0.000f);*/
+		0.000f, 0.001f, 0.000f);
 #pragma endregion
+#endif
 
 		// フォグ設定
 	SetFogEnable(true);
@@ -98,6 +103,7 @@ void SceneManager::Init3D(void)
 
 	// フォグを発生させる奥行きの最小、最大距離
 	SetFogStartEnd(0 , 8000);
+
 
 }
 
@@ -187,6 +193,10 @@ void SceneManager::Draw(void)
 	SetLightPosition(spotLightPos_);
 	DrawSphere3D(spotLightPos_, 20.0f, 10, 0xff0000, 0xff0000, true);*/
 #pragma endregion
+
+	SetUseBackCulling(FALSE);
+	DrawSphere3D(pointLightPos_, 80.0f, 10, GetColor(255, 255, 0), GetColor(255, 255, 0), TRUE);
+	SetUseBackCulling(TRUE);
 }
 
 void SceneManager::Destroy(void)

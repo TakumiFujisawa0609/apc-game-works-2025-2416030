@@ -16,8 +16,8 @@ void Stage::Init(void)
 	modelId_ = MV1LoadModel(
 		(Application::PATH_MODEL + "Stage/Stage.mv1").c_str());
 
-	backModelId_ = MV1LoadModel(
-		(Application::PATH_MODEL + "Stage/BackStage.mv1").c_str());
+	//backModelId_ = MV1LoadModel(
+	//	(Application::PATH_MODEL + "Stage/BackStage.mv1").c_str());
 
 	//skyImg = LoadGraph(
 		//(Application::PATH_IMAGE + "Sky.jpg").c_str());
@@ -37,6 +37,8 @@ void Stage::Init(void)
 
 	// è’ìÀîªíËèÓïÒ(ÉRÉâÉCÉ_)ÇÃçÏê¨
 	MV1SetupCollInfo(modelId_);
+
+	SetUseBackCulling(FALSE);
 }
 
 void Stage::Update(void)

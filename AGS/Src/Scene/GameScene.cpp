@@ -38,13 +38,21 @@ void GameScene::Update(void)
 	pow -= GRAVITY;
 
 	// バウンド
-	if (circlePos_.y < 0.0f)
+	if (circlePos_.y - CIRCLE_RADIUS < 0.0f)
 	{
-		circlePos_.y = 0.0f;
+		auto& sceneMana = SceneManager::GetInstance();
+
+		circlePos_.y = 0.0f + CIRCLE_RADIUS;
 
 		powdddd /= 2.0f;
 		pow = powdddd;
-		SceneManager::GetInstance().SetPointLightPos(circlePos_.z, circlePos_.x);
+		sceneMana.SetPointLightPos(circlePos_);
+
+		if (!isBound_)
+		{
+			sceneMana.IsPointLightPow();
+			isBound_ = true;
+		}
 		
 	}
 	lightPow_ -= 0.001f;
@@ -53,6 +61,7 @@ void GameScene::Update(void)
 	// 発射キー
 	if (CheckHitKey(KEY_INPUT_G) == 1 && !isShooting)
 	{
+		isBound_ = false;
 		isShooting = true;
 		startPos_ = cameraPos;
 		circlePos_ = cameraPos;
@@ -84,13 +93,7 @@ void GameScene::Draw(void)
 {
 	stage_->Draw();
 
-	DrawSphere3D(
-		circlePos_,
-		80,
-		10,
-		0xff0000,
-		0xff0000,
-		true);
+	DrawSphere3D(circlePos_, CIRCLE_RADIUS, 10, 0xff0000, 0xff0000, true);
 }
 
 void GameScene::Release(void)
