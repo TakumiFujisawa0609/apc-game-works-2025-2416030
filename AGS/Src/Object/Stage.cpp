@@ -14,7 +14,7 @@ void Stage::Init(void)
 {
 	// 外部ファイルの３Ｄモデルをロード
 	modelId_ = MV1LoadModel(
-		(Application::PATH_MODEL + "Stage/Stage.mv1").c_str());
+		(Application::PATH_MODEL + "Stage/RoStage.mv1").c_str());
 
 	//backModelId_ = MV1LoadModel(
 	//	(Application::PATH_MODEL + "Stage/BackStage.mv1").c_str());
