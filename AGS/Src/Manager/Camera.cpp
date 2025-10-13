@@ -17,6 +17,9 @@ void Camera::Init(void)
 {
 	pos_ = DEFAULT_POS;
 	angles_ = DEFAULT_ANGLES;
+
+	farClip_ = CAMERA_FAR;
+	farClip_ = 100.0f;
 }
 
 // 更新
@@ -29,7 +32,7 @@ void Camera::Update(void)
 void Camera::SetBeforeDraw(void)
 {
 	// クリップ距離を設定
-	SetCameraNearFar(CAMERA_NEAR, CAMERA_FAR);
+	SetCameraNearFar(CAMERA_NEAR, farClip_);
 
 	switch (mode_)
 	{
@@ -90,20 +93,73 @@ void Camera::SetBeforeDrawFree(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	// WASDでカメラの位置を変える
-	float movePow = 3.0f;
+	VECTOR moveDir = AsoUtility::VECTOR_ZERO;
 
-	if (ins.IsNew(KEY_INPUT_W)) { pos_.z += movePow; }
-	if (ins.IsNew(KEY_INPUT_A)) { pos_.x -= movePow; }
-	if (ins.IsNew(KEY_INPUT_S)) { pos_.z -= movePow; }
-	if (ins.IsNew(KEY_INPUT_D)) { pos_.x += movePow; }
-	if (ins.IsNew(KEY_INPUT_Q)) { pos_.y += movePow; }
-	if (ins.IsNew(KEY_INPUT_E)) { pos_.y -= movePow; }
+	// 同時押しも反映できるように加算
+	if (CheckHitKey(KEY_INPUT_W)) { moveDir = VAdd(moveDir, AsoUtility::DIR_F); }
+	if (CheckHitKey(KEY_INPUT_S)) { moveDir = VAdd(moveDir, AsoUtility::DIR_B); }
+	if (CheckHitKey(KEY_INPUT_A)) { moveDir = VAdd(moveDir, AsoUtility::DIR_L); }
+	if (CheckHitKey(KEY_INPUT_D)) { moveDir = VAdd(moveDir, AsoUtility::DIR_R); }
 
-	// 矢印キーでカメラの角度を変える
-	float rotPow = 1.0f * DX_PI_F / 180.0f;
-	if (CheckHitKey(KEY_INPUT_DOWN)) { angles_.x += rotPow; }
-	if (CheckHitKey(KEY_INPUT_UP)) { angles_.x -= rotPow; }
-	if (CheckHitKey(KEY_INPUT_RIGHT)) { angles_.y += rotPow; }
-	if (CheckHitKey(KEY_INPUT_LEFT)) { angles_.y -= rotPow; }
+	// 方向が入力されていたら
+	if (VSize(moveDir) > 0.0f) {
+		moveDir = VNorm(moveDir); // 斜め移動を等速にする
+
+		// カメラの向き（angles_）を反映する回転行列を作る
+		MATRIX rot = MGetIdent();
+		rot = MMult(rot, MGetRotY(angles_.y)); // Y軸（左右回転）
+		//rot = MMult(rot, MGetRotX(angles_.x)); // X軸（上下回転）
+
+		// 移動方向をカメラ座標系に変換
+		moveDir = VTransform(moveDir, rot);
+
+		if(!isCollision_)
+		{
+			// 座標を更新
+			pos_ = VAdd(pos_, VScale(moveDir, SPEED_MOVE));
+		}
+		else
+		{
+
+		}
+	}
+
+	// 回転処理
+	float anglePowRad = AsoUtility::Deg2RadF(SPEED_ANGLE_DEG);
+	if (CheckHitKey(KEY_INPUT_DOWN)) { angles_.x += anglePowRad; } // 上下
+	if (CheckHitKey(KEY_INPUT_UP)) { angles_.x -= anglePowRad; }
+	if (CheckHitKey(KEY_INPUT_RIGHT)) { angles_.y += anglePowRad; } // 左右
+	if (CheckHitKey(KEY_INPUT_LEFT)) { angles_.y -= anglePowRad; }
+
+
+	else
+	{
+		// 接続されているゲームパッド１の情報を取得
+		InputManager::JOYPAD_IN_STATE padState =
+			ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+		// アナログキーの入力値から方向を取得
+		//dir = ins.GetDirectionXZAKey(padState.AKeyLX, padState.AKeyLY);
+	}
+	//// WASDでカメラの位置を変える
+	//float movePow = 3.0f;
+
+	//VECTOR moveDir = AsoUtility::VECTOR_ZERO;
+
+	//if (ins.IsNew(KEY_INPUT_W)) { pos_.z += movePow; moveDir = AsoUtility::DIR_U; }
+	//if (ins.IsNew(KEY_INPUT_A)) { pos_.x -= movePow; moveDir = AsoUtility::DIR_L; }
+	//if (ins.IsNew(KEY_INPUT_S)) { pos_.z -= movePow; moveDir = AsoUtility::DIR_D; }
+	//if (ins.IsNew(KEY_INPUT_D)) { pos_.x += movePow; moveDir = AsoUtility::DIR_R; }
+	//if (ins.IsNew(KEY_INPUT_Q)) { pos_.y += movePow; }
+	//if (ins.IsNew(KEY_INPUT_E)) { pos_.y -= movePow; }
+
+	//MATRIX mat = MGetIdent();
+
+	//mat = MMult(mat, MGetRotX(moveDir.x));
+
+	//// 矢印キーでカメラの角度を変える
+	//float rotPow = 1.0f * DX_PI_F / 180.0f;
+	//if (CheckHitKey(KEY_INPUT_DOWN)) { angles_.x += rotPow; }
+	//if (CheckHitKey(KEY_INPUT_UP)) { angles_.x -= rotPow; }
+	//if (CheckHitKey(KEY_INPUT_RIGHT)) { angles_.y += rotPow; }
+	//if (CheckHitKey(KEY_INPUT_LEFT)) { angles_.y -= rotPow; }
 }

@@ -34,6 +34,7 @@ void SceneManager::Init(void)
 	camera_ = new Camera();
 	camera_->Init();
 
+
 	isSceneChanging_ = false;
 
 	// デルタタイム
@@ -43,7 +44,7 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::GAME);
+	DoChangeScene(SCENE_ID::TITLE);
 
 	lightPow_ = 0.001f;
 }
@@ -146,7 +147,11 @@ void SceneManager::Update(void)
 	else
 	{
 		lightPow_ = 0.08f;
+		camera_->SetFarClip(100.0f);
 	}
+	SetLightRangeAtten(400.0f, 0.1f, lightPow_, 0.0000001f);
+	//SetLightRangeAtten(0.0f, 1.0f, 0.0f, 0.0f);
+
 }
 
 void SceneManager::Draw(void)
@@ -158,9 +163,14 @@ void SceneManager::Draw(void)
 
 	// 画面を初期化
 	ClearDrawScreen();
-
-	// カメラ設定
-	camera_->SetBeforeDraw();
+	if(sceneId_ == SCENE_ID::GAME)
+	{
+		//if(scene_->CollisionCamera())
+		{
+			// カメラ設定
+			camera_->SetBeforeDraw();
+		}
+	}
 
 	// Effekseerにより再生中のエフェクトを更新する
 	UpdateEffekseer3D();
@@ -182,6 +192,9 @@ void SceneManager::Draw(void)
 	SetLightPosition(pointLightPos_);
 	
 	SetLightRangeAtten(400.0f, 0.1f, lightPow_, 0.0000001f);
+	// 標準ライトのディフューズカラーを青色にする
+	//SetLightDifColor(GetColorF(255.0f, 255.0f, 255.0f, 0.0f));
+
 #pragma endregion
 #pragma region Step2 スポットライト
 	/*if (CheckHitKey(KEY_INPUT_T)) { spotLightPos_.z += 3.0f; }
@@ -195,7 +208,7 @@ void SceneManager::Draw(void)
 #pragma endregion
 
 	SetUseBackCulling(FALSE);
-	DrawSphere3D(pointLightPos_, 80.0f, 10, GetColor(255, 255, 0), GetColor(255, 255, 0), TRUE);
+	//DrawSphere3D(pointLightPos_, 80.0f, 10, GetColor(255, 255, 0), GetColor(255, 255, 0), TRUE);
 	SetUseBackCulling(TRUE);
 }
 
@@ -284,6 +297,8 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		break;
 	case SCENE_ID::GAME:
 		scene_ = new GameScene();
+		break;
+	case SCENE_ID::CLEAR:
 		break;
 	}
 

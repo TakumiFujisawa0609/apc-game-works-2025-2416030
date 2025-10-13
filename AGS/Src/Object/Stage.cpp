@@ -14,7 +14,7 @@ void Stage::Init(void)
 {
 	// 外部ファイルの３Ｄモデルをロード
 	modelId_ = MV1LoadModel(
-		(Application::PATH_MODEL + "Stage/RoStage.mv1").c_str());
+		(Application::PATH_MODEL + "Stage/UoStage.mv1").c_str());
 
 	//backModelId_ = MV1LoadModel(
 	//	(Application::PATH_MODEL + "Stage/BackStage.mv1").c_str());
@@ -29,11 +29,11 @@ void Stage::Init(void)
 	//MV1SetScale(backModelId_, { 1.0f, 1.0f, 1.0f });
 
 	// ３Ｄモデルの位置(引数は、３Ｄ座標)
-	MV1SetPosition(modelId_, { 0.0f, 0.0f, 0.0f });
+	MV1SetPosition(modelId_, { 0.0f, -100.0f, 0.0f });
 	//MV1SetPosition(backModelId_, { 0.0f, 0.0f, 0.0f });
 
 	// ３Ｄモデルの向き(引数は、x, y, zの回転量。単位はラジアン。)
-	MV1SetRotationXYZ(modelId_, { 0.0f, DX_PI_F, 0.0f });
+	MV1SetRotationXYZ(modelId_, { 0.0f, 0.0f, 0.0f });
 
 	// 衝突判定情報(コライダ)の作成
 	MV1SetupCollInfo(modelId_);

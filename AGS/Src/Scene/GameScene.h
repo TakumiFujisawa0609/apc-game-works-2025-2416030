@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <DxLib.h>
 #include "../Application.h"
 #include "SceneBase.h"
@@ -22,10 +22,10 @@ public:
 	constexpr static float CIRCLE_RADIUS = 80.0f;
 
 
-	// �R���X�g���N�^
+	// コンストラクタ
 	GameScene(void);
 
-	// �f�X�g���N�^
+	// デストラクタ
 	~GameScene(void);
 
 	void Init(void) override;
@@ -33,8 +33,10 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
+	bool CollisionCamera(VECTOR pos = {0,0,0});
+
 private:
-	// �X�e�[�W�C���X�^���X
+	// ステージインスタンス
 	Stage* stage_; 
 
 	VECTOR circlePos_ = { 0,0,0 };
@@ -43,18 +45,24 @@ private:
 
 	float lightPow_ = 0.0f;
 
-	bool isBound_ = false;
+	bool isCollision_ = false;
 
-	// �ړ�����
+	// 移動方向
 	VECTOR moveDir_;
 
 	VECTOR movePow;
 
 	bool isShooting = false;
 
-	VECTOR startPos_;  // ���ˊJ�n�ʒu
-	float maxDistance = 1000.0f;  // ����ȏ��񂾂��~
+	VECTOR startPos_;  // 発射開始位置
+	float maxDistance = 1000.0f;  // これ以上飛んだら停止
 
-	void Collision(void);
-	void CollisionGameOver();
+	bool Collision(void);
+
+	// 追加するメンバ変数（クラス内）
+	VECTOR vel = VGet(0.0f, 0.0f, 0.0f); // 初期速度
+	float gravity = -0.5f;             // 重力（Y方向下向き）
+	float bounce = 0.6f;               // 反発係数（0〜1）小さいほどすぐ止まる
+	float friction = 0.98f;            // 空気抵抗 or 摩擦（1.0＝減速なし）
+
 };

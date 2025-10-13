@@ -12,6 +12,11 @@ public:
 		FREE, // フリーモード
 	};
 
+	// カメラスピード（移動）
+	static constexpr float SPEED_MOVE = 10.0f;
+
+	// カメラスピード(度)
+	static constexpr float SPEED_ANGLE_DEG = 1.0f;
 
 	// カメラの初期位置
 	static constexpr VECTOR DEFAULT_POS = { 0.0f, 300.0f, -500.0f };
@@ -30,6 +35,9 @@ public:
 
 	// カメラクリップ：FAR
 	static constexpr float CAMERA_FAR = 15000.0f;
+
+	// カメラ半径
+	static constexpr float CAMERA_RADIUS = 30.0f;
 
 
 	Camera(void);
@@ -55,6 +63,9 @@ public:
 
 	const VECTOR& GetAngle(void) const { return angles_; }
 	const VECTOR& GetPos(void) const { return pos_; }
+	void SetFarClip(float farClip) { farClip_ = farClip; }
+	void SetPos(VECTOR pos) { pos_ = pos; }
+	void SetCollision(bool is) { isCollision_ = is; }
 private:
 	// カメラモード
 	MODE mode_;
@@ -65,8 +76,12 @@ private:
 	// カメラ角度(rad)
 	VECTOR angles_;
 
+	float farClip_ = 0;
+
 	// カメラモード別の制御処理
 	void SetBeforeDrawFixedPoint(void);
 	void SetBeforeDrawFree(void);
+
+	bool isCollision_ = false;
 };
 

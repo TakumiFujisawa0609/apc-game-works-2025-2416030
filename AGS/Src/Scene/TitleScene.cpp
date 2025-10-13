@@ -21,7 +21,7 @@ void TitleScene::Init(void)
 	grid_ = new Grid();
 	grid_->Init();
 
-	imgTitle_ = LoadGraph((Application::PATH_IMAGE + "Title.png").c_str());
+	imgTitle_ = LoadGraph((Application::PATH_IMAGE + "ppap.png").c_str());
 }
 
 void TitleScene::Update(void)
@@ -42,8 +42,8 @@ void TitleScene::Draw(void)
 
 	DrawRotaGraph(
 		Application::SCREEN_SIZE_X / 2,
-		Application::SCREEN_SIZE_Y / 2 - 100,
-		1.0f, 0.0, imgTitle_, true);
+		Application::SCREEN_SIZE_Y / 2,
+		0.5f, 0.0, imgTitle_, true);
 
 #pragma region ３Ｄ設定のお試し
 	VECTOR pos;
@@ -112,6 +112,7 @@ void TitleScene::Draw(void)
 #pragma endregion
 
 #pragma endregion
+	DrawString((640 - GetDrawStringWidth("Spaceでスタート", strlen("Spaceでスタート"))) / 2, 480 - 30, "Spaceでスタート", GetColor(255, 255, 255));
 }
 
 void TitleScene::Release(void)

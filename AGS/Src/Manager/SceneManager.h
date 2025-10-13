@@ -4,6 +4,7 @@
 class SceneBase;
 class Fader;
 class Camera;
+class GameScene;
 
 class SceneManager
 {
@@ -15,7 +16,8 @@ public:
 	{
 		NONE,
 		TITLE,
-		GAME
+		GAME,
+		CLEAR,
 	};
 
 	// 重力
@@ -67,6 +69,8 @@ private:
 
 	SCENE_ID sceneId_;
 	SCENE_ID waitSceneId_;
+
+	GameScene* gameScene_;
 
 	// フェード
 	Fader* fader_;
