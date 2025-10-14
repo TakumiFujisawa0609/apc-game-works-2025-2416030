@@ -143,14 +143,14 @@ void SceneManager::Update(void)
 	}*/
 	if (lightPow_ < 0.04f)
 	{
-		lightPow_ += 0.0002f;
+		lightPow_ += 0.00002f;
 	}
 	else
 	{
 		lightPow_ = 0.08f;
 		camera_->SetFarClip(100.0f);
 	}
-	SetLightRangeAtten(400.0f, 0.1f, lightPow_, 0.0000001f);
+	SetLightRangeAtten(400.0f, 0.000001f, lightPow_, 0.0000001f);
 	//SetLightRangeAtten(0.0f, 1.0f, 0.0f, 0.0f);
 
 }
