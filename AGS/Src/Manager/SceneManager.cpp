@@ -2,6 +2,7 @@
 #include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
+#include "../Scene/GameClear.h"
 #include "SceneManager.h"
 #include "Camera.h"
 
@@ -136,11 +137,11 @@ void SceneManager::Update(void)
 	}
 
 
-	if ((CheckHitKey(KEY_INPUT_SPACE)) == 1)
+	/*if ((CheckHitKey(KEY_INPUT_SPACE)) == 1)
 	{
 		lightPow_ = 0.0001f;
-	}
-	if (lightPow_ < 0.08f)
+	}*/
+	if (lightPow_ < 0.04f)
 	{
 		lightPow_ += 0.0002f;
 	}
@@ -191,7 +192,7 @@ void SceneManager::Draw(void)
 	
 	SetLightPosition(pointLightPos_);
 	
-	SetLightRangeAtten(400.0f, 0.1f, lightPow_, 0.0000001f);
+	SetLightRangeAtten(400.0f, 0.000001f, lightPow_, 0.0000001f);
 	// 標準ライトのディフューズカラーを青色にする
 	//SetLightDifColor(GetColorF(255.0f, 255.0f, 255.0f, 0.0f));
 
@@ -299,6 +300,7 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		scene_ = new GameScene();
 		break;
 	case SCENE_ID::CLEAR:
+		scene_ = new GameClear();
 		break;
 	}
 

@@ -4,7 +4,6 @@
 class SceneBase;
 class Fader;
 class Camera;
-class GameScene;
 
 class SceneManager
 {
@@ -56,11 +55,15 @@ public:
 
 	Camera& GetCamera(void) const{ return *camera_; }
 
+	
+
 	void SetPointLightPos(VECTOR pos)
 	{
 		pointLightPos_ = pos;
 	}
-	void IsPointLightPow() { lightPow_ = 0.0001f; }
+	void IsPointLightPow() { lightPow_ = 0.00000001f; }
+
+	VECTOR GetLightPos() { return pointLightPos_; }
 
 private:
 
@@ -69,8 +72,6 @@ private:
 
 	SCENE_ID sceneId_;
 	SCENE_ID waitSceneId_;
-
-	GameScene* gameScene_;
 
 	// フェード
 	Fader* fader_;

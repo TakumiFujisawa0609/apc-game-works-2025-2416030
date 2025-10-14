@@ -30,7 +30,7 @@ void TitleScene::Update(void)
 
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsTrgDown(KEY_INPUT_SPACE))
+	if (ins.IsTrgDown(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
@@ -38,7 +38,7 @@ void TitleScene::Update(void)
 
 void TitleScene::Draw(void)
 {
-	grid_->Draw();
+	//grid_->Draw();
 
 	DrawRotaGraph(
 		Application::SCREEN_SIZE_X / 2,
@@ -112,7 +112,7 @@ void TitleScene::Draw(void)
 #pragma endregion
 
 #pragma endregion
-	DrawString((640 - GetDrawStringWidth("Spaceでスタート", strlen("Spaceでスタート"))) / 2, 480 - 30, "Spaceでスタート", GetColor(255, 255, 255));
+	DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("Space/Aでスタート", strlen("Space?Aでスタート"))) / 2, Application::SCREEN_SIZE_Y - 30, "Space/Aでスタート", GetColor(255, 255, 255));
 }
 
 void TitleScene::Release(void)

@@ -85,6 +85,42 @@ void Camera::ChangeMode(MODE mode)
 	}
 }
 
+VECTOR Camera::Move()
+{
+	VECTOR moveDir = AsoUtility::VECTOR_ZERO;
+
+	// キーボード入力
+	if (CheckHitKey(KEY_INPUT_W)) moveDir = VAdd(moveDir, AsoUtility::DIR_F);
+	if (CheckHitKey(KEY_INPUT_S)) moveDir = VAdd(moveDir, AsoUtility::DIR_B);
+	if (CheckHitKey(KEY_INPUT_A)) moveDir = VAdd(moveDir, AsoUtility::DIR_L);
+	if (CheckHitKey(KEY_INPUT_D)) moveDir = VAdd(moveDir, AsoUtility::DIR_R);
+
+	// 入力があれば正規化
+	if (VSize(moveDir) > 0.0f) moveDir = VNorm(moveDir);
+
+	// カメラ角度を反映した回転行列
+	MATRIX rot = MGetRotY(angles_.y);
+	moveDir = VTransform(moveDir, rot);
+
+	// 次の座標を計算
+	VECTOR nextPos = VAdd(pos_, VScale(moveDir, SPEED_MOVE));
+
+	// カメラ角度の回転処理（上下左右）
+	float anglePowRad = AsoUtility::Deg2RadF(SPEED_ANGLE_DEG);
+	if (CheckHitKey(KEY_INPUT_DOWN)) angles_.x += anglePowRad;
+	if (CheckHitKey(KEY_INPUT_UP))   angles_.x -= anglePowRad;
+	if (CheckHitKey(KEY_INPUT_RIGHT)) angles_.y += anglePowRad;
+	if (CheckHitKey(KEY_INPUT_LEFT))  angles_.y -= anglePowRad;
+
+	return nextPos; // 更新はここではしない
+}
+
+void Camera::ApplyMove(const VECTOR& newPos)
+{
+	pos_ = newPos; // 確定的に座標を反映
+}
+
+
 void Camera::SetBeforeDrawFixedPoint(void)
 {
 }
@@ -95,51 +131,59 @@ void Camera::SetBeforeDrawFree(void)
 
 	VECTOR moveDir = AsoUtility::VECTOR_ZERO;
 
-	// 同時押しも反映できるように加算
-	if (CheckHitKey(KEY_INPUT_W)) { moveDir = VAdd(moveDir, AsoUtility::DIR_F); }
-	if (CheckHitKey(KEY_INPUT_S)) { moveDir = VAdd(moveDir, AsoUtility::DIR_B); }
-	if (CheckHitKey(KEY_INPUT_A)) { moveDir = VAdd(moveDir, AsoUtility::DIR_L); }
-	if (CheckHitKey(KEY_INPUT_D)) { moveDir = VAdd(moveDir, AsoUtility::DIR_R); }
-
-	// 方向が入力されていたら
-	if (VSize(moveDir) > 0.0f) {
-		moveDir = VNorm(moveDir); // 斜め移動を等速にする
-
-		// カメラの向き（angles_）を反映する回転行列を作る
-		MATRIX rot = MGetIdent();
-		rot = MMult(rot, MGetRotY(angles_.y)); // Y軸（左右回転）
-		//rot = MMult(rot, MGetRotX(angles_.x)); // X軸（上下回転）
-
-		// 移動方向をカメラ座標系に変換
-		moveDir = VTransform(moveDir, rot);
-
-		if(!isCollision_)
-		{
-			// 座標を更新
-			pos_ = VAdd(pos_, VScale(moveDir, SPEED_MOVE));
-		}
-		else
-		{
-
-		}
+	if (GetJoypadNum() == 0)
+	{
+		// 方向回転によるXYZの移動
+		// 同時押しも反映できるように加算
+		if (CheckHitKey(KEY_INPUT_W)) { moveDir = VAdd(moveDir, AsoUtility::DIR_F); }
+		if (CheckHitKey(KEY_INPUT_S)) { moveDir = VAdd(moveDir, AsoUtility::DIR_B); }
+		if (CheckHitKey(KEY_INPUT_A)) { moveDir = VAdd(moveDir, AsoUtility::DIR_L); }
+		if (CheckHitKey(KEY_INPUT_D)) { moveDir = VAdd(moveDir, AsoUtility::DIR_R); }
 	}
-
-	// 回転処理
-	float anglePowRad = AsoUtility::Deg2RadF(SPEED_ANGLE_DEG);
-	if (CheckHitKey(KEY_INPUT_DOWN)) { angles_.x += anglePowRad; } // 上下
-	if (CheckHitKey(KEY_INPUT_UP)) { angles_.x -= anglePowRad; }
-	if (CheckHitKey(KEY_INPUT_RIGHT)) { angles_.y += anglePowRad; } // 左右
-	if (CheckHitKey(KEY_INPUT_LEFT)) { angles_.y -= anglePowRad; }
-
-
 	else
 	{
+		float rotPow = 1.0f * DX_PI_F / 180.0f;
+
+		// 接続されているゲームパッド１の情報を取得
+		InputManager::JOYPAD_IN_STATE padState =
+			ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+
+		// アナログキーの入力値から方向を取得
+		VECTOR dir = ins.GetDirectionXZAKey(padState.AKeyRX, padState.AKeyRY);
+		VECTOR dir2 = ins.GetDirectionXZAKey(padState.AKeyLX, padState.AKeyLY);
+	
+
+		// 右スティック上下の傾き
+		angles_.x -= dir.z * rotPow * 2.0f;
+
+		// 右スティック上下の傾き
+		angles_.y += dir.x * rotPow * 2.0f;
+
+		if (!AsoUtility::EqualsVZero(dir2))
+		{
+			// XYZの回転行列
+			// XZ平面移動にする場合は、XZの回転を考慮しないようにする
+			MATRIX mat = MGetIdent();
+			//mat = MMult(mat, MGetRotX(angles_.x));
+
+			mat = MMult(mat, MGetRotY(angles_.y));
+			//mat = MMult(mat, MGetRotZ(angles_.z));
+
+			// 回転行列を使用して、ベクトルを回転させる
+			moveDir_ = VTransform(dir2, mat);
+
+			// 移動方向から角度に変換する
+			//angles_.y = atan2f(moveDir_.x, moveDir_.z);
+
+			// 方向×スピードで移動量を作って、座標に足して移動
+			pos_ = VAdd(pos_, VScale(moveDir_, SPEED_MOVE));
+		}
+	}
 		// 接続されているゲームパッド１の情報を取得
 		InputManager::JOYPAD_IN_STATE padState =
 			ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
 		// アナログキーの入力値から方向を取得
-		//dir = ins.GetDirectionXZAKey(padState.AKeyLX, padState.AKeyLY);
-	}
+		
 	//// WASDでカメラの位置を変える
 	//float movePow = 3.0f;
 

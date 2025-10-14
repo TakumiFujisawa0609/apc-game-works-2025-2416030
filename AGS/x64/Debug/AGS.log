@@ -1,6 +1,3 @@
-﻿  SceneManager.cpp
-C:\Project\AGS_Winter\AGS\Src\Manager\SceneManager.cpp(229,20): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-C:\Project\AGS_Winter\AGS\Src\Manager\SceneManager.cpp(230,20): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-  GameScene.cpp
-  コードを生成中...
+﻿  GameClear.cpp
+C:\Project\AGS_Winter\AGS\Src\Scene\GameClear.cpp(32,88): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
   AGS.vcxproj -> C:\Project\AGS_Winter\AGS\x64\Debug\AGS.exe

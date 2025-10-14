@@ -12,6 +12,8 @@ public:
 		FREE, // フリーモード
 	};
 
+	static constexpr float MOVE_POW = 3.0f;
+
 	// カメラスピード（移動）
 	static constexpr float SPEED_MOVE = 10.0f;
 
@@ -66,6 +68,9 @@ public:
 	void SetFarClip(float farClip) { farClip_ = farClip; }
 	void SetPos(VECTOR pos) { pos_ = pos; }
 	void SetCollision(bool is) { isCollision_ = is; }
+
+	VECTOR Move();                     // 入力から次座標を計算して返す
+	void ApplyMove(const VECTOR& newPos); // 確定的に pos_ に反映
 private:
 	// カメラモード
 	MODE mode_;
@@ -75,6 +80,9 @@ private:
 
 	// カメラ角度(rad)
 	VECTOR angles_;
+
+	// 移動方向
+	VECTOR moveDir_;
 
 	float farClip_ = 0;
 

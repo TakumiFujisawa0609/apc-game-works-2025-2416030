@@ -5,6 +5,7 @@
 
 class SceneManager;
 class Stage;
+class Enemy;
 
 class GameScene : public SceneBase
 {
@@ -39,6 +40,8 @@ private:
 	// ステージインスタンス
 	Stage* stage_; 
 
+	Enemy* enemy_;
+
 	VECTOR circlePos_ = { 0,0,0 };
 	float pow = 20.0f;
 	float powdddd = 20.0f;
@@ -53,6 +56,8 @@ private:
 	VECTOR movePow;
 
 	bool isShooting = false;
+
+	int seId_;
 
 	VECTOR startPos_;  // 発射開始位置
 	float maxDistance = 1000.0f;  // これ以上飛んだら停止

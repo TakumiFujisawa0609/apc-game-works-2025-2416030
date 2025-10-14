@@ -1,7 +1,9 @@
 #include "../Utility/AsoUtility.h"
+#include "../Application.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Stage.h"
+#include "../Object/Enemy.h"
 #include "../Manager/Camera.h"
 #include "GameScene.h"
 
@@ -18,10 +20,15 @@ void GameScene::Init(void)
 	stage_ = new Stage();
 	stage_->Init();
 
+	enemy_ = new Enemy();
+	enemy_->Init();
+
 	// カメラをフリーモードにする
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FREE);
 
 	lightPow_ = 0.001f;
+
+	seId_ = LoadSoundMem((Application::PATH_SE + "Aura.mp3").c_str());
 }
 
 void GameScene::Update(void)
@@ -32,10 +39,7 @@ void GameScene::Update(void)
 	bool isCameraCollision = CollisionCamera();
 
 	stage_->Update();
-
-
-	
-	
+	enemy_->Update();
 
 	if (isCollision)
 	{
@@ -47,8 +51,8 @@ void GameScene::Update(void)
 			sceneMana.SetPointLightPos(circlePos_);
 			sceneMana.IsPointLightPow();
 			isCollision_ = true;
-			SceneManager::GetInstance().GetCamera().SetFarClip(2500.0f);
-
+			SceneManager::GetInstance().GetCamera().SetFarClip(1800.0f);
+			PlaySoundMem(seId_, DX_PLAYTYPE_BACK);
 		}
 	}
 	else
@@ -75,8 +79,14 @@ void GameScene::Update(void)
 		pow -= GRAVITY;
 	}
 
+	auto& ins = InputManager::GetInstance();
+	// 接続されているゲームパッド１の情報を取得
+	InputManager::JOYPAD_IN_STATE padState =
+		ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+	
+
 	// 発射キー
-	if (CheckHitKey(KEY_INPUT_G) == 1)
+	if (CheckHitKey(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
 		isCollision_ = false;
 		isShooting = true;
@@ -99,7 +109,7 @@ void GameScene::Update(void)
 		powdddd = 20.0f;  // 移動速度
 		
 	}
-
+	
 	//// バウンド
 	//if (circlePos_.y - CIRCLE_RADIUS < 0.0f)
 	//{
@@ -133,6 +143,7 @@ void GameScene::Update(void)
 void GameScene::Draw(void)
 {
 	stage_->Draw();
+	enemy_->Draw();
 
 	DrawSphere3D(circlePos_, CIRCLE_RADIUS, 10, 0xff0000, 0xff0000, true);
 	DrawFormatString(
@@ -152,11 +163,44 @@ void GameScene::Release(void)
 	stage_->Release();
 	delete stage_;
 	stage_ = nullptr;
+
+	enemy_->Release();
+	delete enemy_;
+	enemy_ = nullptr;
 }
 
 bool GameScene::CollisionCamera(VECTOR pos)
 {
 	auto& camera = SceneManager::GetInstance().GetCamera();
+
+	// Camera の次の座標を取得
+	VECTOR nextPos = camera.Move();
+
+	// 衝突判定
+	int stageModelId = stage_->GetGoalModelId();
+	auto info = MV1CollCheck_Sphere(stageModelId, -1, nextPos, camera.CAMERA_RADIUS);
+	if (info.HitNum != 0)
+	{
+		// 衝突なし → 座標を確定
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
+		return true;
+	}
+
+	stageModelId = stage_->GetModelId();
+	info = MV1CollCheck_Sphere(stageModelId, -1, nextPos, camera.CAMERA_RADIUS);
+
+	if (info.HitNum == 0)
+	{
+		// 衝突なし → 座標を確定
+		camera.ApplyMove(nextPos);
+		return true;
+	}
+	else
+	{
+		// 衝突あり → pos_ は更新されない
+	}
+
+	/*auto& camera = SceneManager::GetInstance().GetCamera();
 
 	int stageModelId = stage_->GetModelId();
 	
@@ -168,6 +212,7 @@ bool GameScene::CollisionCamera(VECTOR pos)
 		return true;
 	}
 	camera.SetCollision(false);
+	return false;*/
 	return false;
 }
 

@@ -7,6 +7,11 @@ class InputManager
 {
 
 public:
+	// アナログキーの最大値
+	static constexpr float AKEY_VAL_MAX = 1000.0f;
+
+	// アナログキーの入力受付しきい値(0.0～1.0)
+	static constexpr float THRESHOLD = 0.35f;
 
 	// ゲームコントローラーの認識番号
 	// DxLib定数、DX_INPUT_PAD1等に対応
@@ -117,6 +122,9 @@ public:
 	bool IsPadBtnNew(JOYPAD_NO no, JOYPAD_BTN btn) const;
 	bool IsPadBtnTrgDown(JOYPAD_NO no, JOYPAD_BTN btn) const;
 	bool IsPadBtnTrgUp(JOYPAD_NO no, JOYPAD_BTN btn) const;
+
+	// アナログキーの入力値から方向を取得
+	VECTOR GetDirectionXZAKey(int aKeyX, int aKeyY);
 
 private:
 

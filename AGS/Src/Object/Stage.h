@@ -14,9 +14,11 @@ public:
 	void Release(void);
 
 	int GetModelId() { return modelId_; }
+	int GetGoalModelId() { return goalModelId_; }
 private:
 	// ‚R‚cƒ‚ƒfƒ‹‚Ìƒnƒ“ƒhƒ‹ID
 	int modelId_;
+	int goalModelId_;
 
 	int backModelId_;
 
