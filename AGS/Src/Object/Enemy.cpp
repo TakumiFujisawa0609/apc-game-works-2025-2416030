@@ -50,6 +50,9 @@ void Enemy::Move()
 {
 	auto& camera = SceneManager::GetInstance();
 
-	pos_ = camera.GetLightPos();
-	int a = 0;
+	targetPos_ = camera.GetLightPos();
+	//pos_.y = 0.0f;
+	MV1SetPosition(modelId_, pos_);
+
+
 }

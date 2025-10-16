@@ -37,6 +37,8 @@ public:
 	void Update(void);
 	void Draw(void);
 	void Release(void);
+
+	void SetTargetPos(VECTOR pos) { targetPos_ = pos; }
 private:
 	// アニメーションコントローラ
 	AnimationController* animationController_;
@@ -58,6 +60,8 @@ private:
 
 	// 移動速度
 	float speed_;
+
+	VECTOR targetPos_;
 
 	void Move();
 };
