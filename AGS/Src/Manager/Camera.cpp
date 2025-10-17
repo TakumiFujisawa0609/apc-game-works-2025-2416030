@@ -1,6 +1,7 @@
 #include <EffekseerForDXLib.h>
 #include "../Utility/AsoUtility.h"
 #include "../Manager/InputManager.h"
+#include "SceneManager.h"
 #include "Camera.h"
 
 Camera::Camera(void)
@@ -87,6 +88,13 @@ void Camera::ChangeMode(MODE mode)
 
 VECTOR Camera::Move()
 {
+	// カメラ角度の回転処理（上下左右）
+	float anglePowRad = AsoUtility::Deg2RadF(SPEED_ANGLE_DEG);
+	if (CheckHitKey(KEY_INPUT_DOWN)) angles_.x += anglePowRad;
+	if (CheckHitKey(KEY_INPUT_UP))   angles_.x -= anglePowRad;
+	if (CheckHitKey(KEY_INPUT_RIGHT)) angles_.y += anglePowRad;
+	if (CheckHitKey(KEY_INPUT_LEFT))  angles_.y -= anglePowRad;
+
 	VECTOR moveDir = AsoUtility::VECTOR_ZERO;
 
 	// キーボード入力
@@ -96,21 +104,16 @@ VECTOR Camera::Move()
 	if (CheckHitKey(KEY_INPUT_D)) moveDir = VAdd(moveDir, AsoUtility::DIR_R);
 
 	// 入力があれば正規化
-	if (VSize(moveDir) > 0.0f) moveDir = VNorm(moveDir);
+	if (VSize(moveDir) <= 0.0f) return pos_;
+
+	moveDir = VNorm(moveDir);
 
 	// カメラ角度を反映した回転行列
 	MATRIX rot = MGetRotY(angles_.y);
 	moveDir = VTransform(moveDir, rot);
 
 	// 次の座標を計算
-	VECTOR nextPos = VAdd(pos_, VScale(moveDir, SPEED_MOVE));
-
-	// カメラ角度の回転処理（上下左右）
-	float anglePowRad = AsoUtility::Deg2RadF(SPEED_ANGLE_DEG);
-	if (CheckHitKey(KEY_INPUT_DOWN)) angles_.x += anglePowRad;
-	if (CheckHitKey(KEY_INPUT_UP))   angles_.x -= anglePowRad;
-	if (CheckHitKey(KEY_INPUT_RIGHT)) angles_.y += anglePowRad;
-	if (CheckHitKey(KEY_INPUT_LEFT))  angles_.y -= anglePowRad;
+	VECTOR nextPos = VAdd(pos_, VScale(moveDir, SPEED_MOVE * SceneManager::GetInstance().GetDeltaTime()));
 
 	return nextPos; // 更新はここではしない
 }

@@ -36,6 +36,9 @@ void Application::Init(void)
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
 	ChangeWindowMode(true);
 
+	// ScreenFlip ‚ğÀs‚µ‚Ä‚à‚’¼“¯ŠúM†‚ğ‘Ò‚½‚È‚¢
+	//SetWaitVSyncFlag(FALSE);
+
 	// DxLib‚Ì‰Šú‰»
 	SetUseDirect3DVersion(DX_DIRECT3D_11);
 	isInitFail_ = false;
