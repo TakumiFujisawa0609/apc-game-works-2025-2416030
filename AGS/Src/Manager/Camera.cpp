@@ -88,12 +88,21 @@ void Camera::ChangeMode(MODE mode)
 
 VECTOR Camera::Move()
 {
-	// カメラ角度の回転処理（上下左右）
-	float anglePowRad = AsoUtility::Deg2RadF(SPEED_ANGLE_DEG);
-	if (CheckHitKey(KEY_INPUT_DOWN)) angles_.x += anglePowRad;
-	if (CheckHitKey(KEY_INPUT_UP))   angles_.x -= anglePowRad;
-	if (CheckHitKey(KEY_INPUT_RIGHT)) angles_.y += anglePowRad;
-	if (CheckHitKey(KEY_INPUT_LEFT))  angles_.y -= anglePowRad;
+	// 回転--------------------------------
+	// 回転速度（ラジアン/秒）
+	float anglePowRad = AsoUtility::Deg2RadF(SPEED_ANGLE_DEG) * SceneManager::GetInstance().GetDeltaTime();
+
+	// 入力方向ベクトル
+	VECTOR angleDir = AsoUtility::VECTOR_ZERO;
+	if (CheckHitKey(KEY_INPUT_DOWN))  angleDir.x += 1.0f;
+	if (CheckHitKey(KEY_INPUT_UP))    angleDir.x -= 1.0f;
+	if (CheckHitKey(KEY_INPUT_RIGHT)) angleDir.y += 1.0f;
+	if (CheckHitKey(KEY_INPUT_LEFT))  angleDir.y -= 1.0f;
+
+	// 角度更新
+	angles_.x += angleDir.x * anglePowRad;
+	angles_.y += angleDir.y * anglePowRad;
+	//----------------------------------------
 
 	VECTOR moveDir = AsoUtility::VECTOR_ZERO;
 
@@ -157,10 +166,10 @@ void Camera::SetBeforeDrawFree(void)
 	
 
 		// 右スティック上下の傾き
-		angles_.x -= dir.z * rotPow * 2.0f;
+		angles_.x -= dir.z * rotPow * 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 		// 右スティック上下の傾き
-		angles_.y += dir.x * rotPow * 2.0f;
+		angles_.y += dir.x * rotPow * 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 		if (!AsoUtility::EqualsVZero(dir2))
 		{
@@ -179,7 +188,7 @@ void Camera::SetBeforeDrawFree(void)
 			//angles_.y = atan2f(moveDir_.x, moveDir_.z);
 
 			// 方向×スピードで移動量を作って、座標に足して移動
-			pos_ = VAdd(pos_, VScale(moveDir_, SPEED_MOVE));
+			pos_ = VAdd(pos_, VScale(moveDir_, SPEED_MOVE * SceneManager::GetInstance().GetDeltaTime()));
 		}
 	}
 		// 接続されているゲームパッド１の情報を取得

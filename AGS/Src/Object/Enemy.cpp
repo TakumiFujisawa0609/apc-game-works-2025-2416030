@@ -48,11 +48,41 @@ void Enemy::Release(void)
 
 void Enemy::Move()
 {
-	auto& camera = SceneManager::GetInstance();
+    auto& camera = SceneManager::GetInstance();
 
-	targetPos_ = camera.GetLightPos();
-	//pos_.y = 0.0f;
-	MV1SetPosition(modelId_, pos_);
+    // ターゲット位置（ライト）
+    VECTOR targetPos = camera.GetLightPos();
+    targetPos.y = 0.0f; // 高さ固定
 
+    // 移動速度
+    float moveSpeed = 5.0f;
 
+    // DeltaTime取得
+    float dt = SceneManager::GetInstance().GetDeltaTime();
+
+    // 方向ベクトル
+    VECTOR diff = VSub(targetPos, pos_);
+    float dist = VSize(diff);
+
+    if (dist > 0.01f)
+    {
+        // 正規化して移動量
+        VECTOR moveVec = VScale(VNorm(diff), moveSpeed * dt);
+
+        // 距離を超えないように調整
+        if (VSize(moveVec) > dist) moveVec = diff;
+
+        // 位置更新
+        pos_ = VAdd(pos_, moveVec);
+    }
+
+    // Y軸回転を計算（XZ平面のみ）
+    float angleY = atan2f(diff.x, diff.z); // ラジアン
+    MATRIX rotMat = MGetRotY(angleY);
+
+    // モデルに反映
+    MV1SetMatrix(modelId_, rotMat);
+    MV1SetPosition(modelId_, pos_);
 }
+
+

@@ -1,5 +1,6 @@
 #include <DxLib.h>
 #include "../Application.h"
+#include "../Manager/SceneManager.h"
 #include "Fader.h"
 
 Fader::STATE Fader::GetState(void) const
@@ -44,7 +45,7 @@ void Fader::Update(void)
 		return;
 
 	case STATE::FADE_OUT:
-		alpha_ += SPEED_ALPHA;
+		alpha_ += SPEED_ALPHA * SceneManager::GetInstance().GetDeltaTime();
 		if (alpha_ > 255)
 		{
 			// フェード終了
@@ -60,7 +61,7 @@ void Fader::Update(void)
 		break;
 
 	case STATE::FADE_IN:
-		alpha_ -= SPEED_ALPHA;
+		alpha_ -= SPEED_ALPHA * SceneManager::GetInstance().GetDeltaTime();
 		if (alpha_ < 0)
 		{
 			// フェード終了

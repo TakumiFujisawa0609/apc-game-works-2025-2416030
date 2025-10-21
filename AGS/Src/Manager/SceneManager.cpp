@@ -106,7 +106,7 @@ void SceneManager::Init3D(void)
 	// フォグを発生させる奥行きの最小、最大距離
 	SetFogStartEnd(0 , 8000);
 
-
+	DeltaTimeInit();
 }
 
 void SceneManager::Update(void)
@@ -122,6 +122,8 @@ void SceneManager::Update(void)
 	deltaTime_ = static_cast<float>(
 		std::chrono::duration_cast<std::chrono::nanoseconds>(nowTime - preTime_).count() / 1000000000.0);
 	preTime_ = nowTime;
+
+	DeltaTimeUpdate();
 
 	// フェード機能の更新
 	fader_->Update();
@@ -141,7 +143,7 @@ void SceneManager::Update(void)
 	{
 		lightPow_ = 0.0001f;
 	}*/
-	if (lightPow_ < 0.04f)
+	if (lightPow_ < 0.004f)
 	{
 		lightPow_ += 0.00002f;
 	}
@@ -195,6 +197,10 @@ void SceneManager::Draw(void)
 	SetLightRangeAtten(400.0f, 0.000001f, lightPow_, 0.0000001f);
 	// 標準ライトのディフューズカラーを青色にする
 	//SetLightDifColor(GetColorF(255.0f, 255.0f, 255.0f, 0.0f));
+
+#ifdef _DEBUG
+	DrawFormatString(10, 10, GetColor(255, 255, 255), "FPS : %.1f", 1.0f / deltaTime_);
+#endif // DEBUG
 
 #pragma endregion
 #pragma region Step2 スポットライト
@@ -253,7 +259,10 @@ SceneManager::SCENE_ID SceneManager::GetSceneID(void)
 float SceneManager::GetDeltaTime(void) const
 {
 	//return 1.0f / 60.0f;
-	return deltaTime_;
+	//return deltaTime_;
+
+	// 60FPS固定
+	return DeltaTime * 60.0f;
 }
 
 SceneManager::SceneManager(void)
@@ -340,4 +349,43 @@ void SceneManager::Fade(void)
 		break;
 	}
 
+}
+
+void SceneManager::DeltaTimeInit(void)
+{
+	// 現在のシステム時間を取得
+	NowTime = GetNowHiPerformanceCount();
+
+	// システム時間を取得しておく
+	Time = GetNowHiPerformanceCount();
+
+	// 最初の経過時間は仮に 0.000001f 秒にしておく
+	DeltaTime = 0.000001f;
+
+	// FPS計測関係の初期化
+	FPSCheckTime = GetNowHiPerformanceCount();
+	FPS = 0;
+	FPSCounter = 0;
+}
+
+void SceneManager::DeltaTimeUpdate(void)
+{
+	// 現在のシステム時間を取得
+	NowTime = GetNowHiPerformanceCount();
+
+	// 前回取得した時間からの経過時間を秒に変換してセット
+	// ( GetNowHiPerformanceCount で取得できる値はマイクロ秒単位なので 1000000 で割ることで秒単位になる )
+	DeltaTime = (NowTime - Time) / 1000000.0f;
+
+	// 今回取得した時間を保存
+	Time = NowTime;
+
+	// FPS関係の処理( 1秒経過する間に実行されたメインループの回数を FPS とする )
+	FPSCounter++;
+	if (NowTime - FPSCheckTime > 1000000)
+	{
+		FPS = FPSCounter;
+		FPSCounter = 0;
+		FPSCheckTime = NowTime;
+	}
 }
