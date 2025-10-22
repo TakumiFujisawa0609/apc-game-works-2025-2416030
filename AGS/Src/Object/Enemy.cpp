@@ -57,32 +57,47 @@ void Enemy::Move()
     // 移動速度
     float moveSpeed = 5.0f;
 
+    // 停止距離（この距離より近づいたら止まる）
+    const float stopDistance = 2.0f; // ← 好きな値に調整（例：2.0f = 2m 手前）
+
     // DeltaTime取得
     float dt = SceneManager::GetInstance().GetDeltaTime();
 
-    // 方向ベクトル
+    // 方向ベクトル（XZ平面）
     VECTOR diff = VSub(targetPos, pos_);
+    diff.y = 0.0f;
     float dist = VSize(diff);
 
-    if (dist > 0.01f)
+    // stopDistance より遠いときだけ移動
+    if (dist > stopDistance)
     {
-        // 正規化して移動量
-        VECTOR moveVec = VScale(VNorm(diff), moveSpeed * dt);
+        // 実際に進む距離
+        float moveDist = moveSpeed * dt;
 
         // 距離を超えないように調整
-        if (VSize(moveVec) > dist) moveVec = diff;
+        if (moveDist > dist - stopDistance) moveDist = dist - stopDistance;
+
+        // 正規化して移動ベクトル作成
+        VECTOR moveVec = VScale(VNorm(diff), moveDist);
 
         // 位置更新
         pos_ = VAdd(pos_, moveVec);
     }
 
-    // Y軸回転を計算（XZ平面のみ）
-    float angleY = atan2f(diff.x, diff.z); // ラジアン
-    MATRIX rotMat = MGetRotY(angleY);
+    // --- 回転処理 ---
+    float angleY = atan2f(diff.x, diff.z);
+
+    // モデルの前方向が180度反対だった場合
+    const float angleOffset = DX_PI_F;
+    float finalAngleY = angleY + angleOffset;
+
+    MATRIX rotMat = MGetRotY(finalAngleY);
+
+    // 位置も反映
+    rotMat.m[3][0] = pos_.x;
+    rotMat.m[3][1] = pos_.y;
+    rotMat.m[3][2] = pos_.z;
 
     // モデルに反映
     MV1SetMatrix(modelId_, rotMat);
-    MV1SetPosition(modelId_, pos_);
 }
-
-
