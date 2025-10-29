@@ -36,6 +36,12 @@ void Application::Init(void)
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
 	ChangeWindowMode(true);
 
+	SetGlobalAmbientLight(GetColorF(0.0f,0.0f,0.0f,1.0f));
+
+	SetLightEnable(FALSE); // 既存ライトOFF
+	SetGlobalAmbientLight(GetColorF(0.0f, 0.0f, 0.0f, 1.0f)); // 環境光ゼロ
+	SetBackgroundColor(0, 0, 0); // 背景も黒
+
 	// ScreenFlip を実行しても垂直同期信号を待たない
 	//SetWaitVSyncFlag(FALSE);
 

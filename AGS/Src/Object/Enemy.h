@@ -26,6 +26,11 @@ public:
 		MAX,
 	};
 
+	enum class MOVE_TYPE
+	{
+
+	};
+
 	static constexpr float SPEED = 2.0f;
 
 	// コンストラクタ
