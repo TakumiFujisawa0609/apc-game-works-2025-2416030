@@ -145,7 +145,7 @@ void SceneManager::Update(void)
 	}*/
 	if (lightPow_ < 0.004f)
 	{
-		lightPow_ += 0.00002f;
+		//lightPow_ += 0.00002f;
 	}
 	else
 	{

@@ -31,6 +31,18 @@ public:
 
 	};
 
+	enum class MOVE_SPOT
+	{
+		SPOT1,
+		SPOT2,
+		SPOT3,
+		MAX,
+	};
+
+	static constexpr VECTOR SPOT1_POS = { -60.0f, 300.0f, 4775.0f };
+	static constexpr VECTOR SPOT2_POS = { 0.0f, 300.0f, 0.0f };
+	static constexpr VECTOR SPOT3_POS = { 3060.0f, 300.0f, 4970.0f };
+
 	static constexpr float SPEED = 2.0f;
 
 	// コンストラクタ
@@ -67,6 +79,9 @@ private:
 	float speed_;
 
 	VECTOR targetPos_;
+
+	bool isMoveSpot_;
+	float arriveThreshold_ = 10.0f; // 到着判定距離
 
 	void Move();
 };

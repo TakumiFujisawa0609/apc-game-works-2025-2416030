@@ -62,7 +62,10 @@ void Application::Init(void)
 
 	// 乱数の初期値を設定する
 	// 設定する数値によって、ランダムの出方が変わる
-	SRand(date.Year + date.Mon + date.Day + date.Hour + date.Min + date.Sec);
+	//SRand(date.Year + date.Mon + date.Day + date.Hour + date.Min + date.Sec);
+
+	// 乱数の初期化
+	srand((unsigned int)time(NULL));
 
 	// 入力制御初期化
 	SetUseDirectInputFlag(true);

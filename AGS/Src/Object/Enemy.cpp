@@ -50,9 +50,20 @@ void Enemy::Move()
 {
     auto& camera = SceneManager::GetInstance();
 
-    // ターゲット位置（ライト）
-    VECTOR targetPos = camera.GetLightPos();
-    targetPos.y = 0.0f; // 高さ固定
+    int ran = GetRand(static_cast<int>(MOVE_SPOT::MAX) - 1); 
+    MOVE_SPOT spot = static_cast<MOVE_SPOT>(ran);
+
+    const VECTOR moveSpots[] = { SPOT1_POS, SPOT2_POS, SPOT3_POS };
+
+    if (!isMoveSpot_)
+    {
+        // ランダムにスポット選択
+        int r = GetRand(_countof(moveSpots) - 1);
+        targetPos_ = moveSpots[r];
+
+        isMoveSpot_ = true;
+    }
+    targetPos_.y = 0.0f; // 高さ固定
 
     // 移動速度
     float moveSpeed = 5.0f;
@@ -64,7 +75,7 @@ void Enemy::Move()
     float dt = SceneManager::GetInstance().GetDeltaTime();
 
     // 方向ベクトル（XZ平面）
-    VECTOR diff = VSub(targetPos, pos_);
+    VECTOR diff = VSub(targetPos_, pos_);
     diff.y = 0.0f;
     float dist = VSize(diff);
 
@@ -100,4 +111,10 @@ void Enemy::Move()
 
     // モデルに反映
     MV1SetMatrix(modelId_, rotMat);
+
+    if (dist < arriveThreshold_)
+    {
+        // 到着！
+        isMoveSpot_ = false;
+    }
 }
