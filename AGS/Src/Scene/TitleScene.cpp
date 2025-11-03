@@ -46,7 +46,7 @@ void TitleScene::Draw(void)
 		0.5f, 0.0, imgTitle_, true);
 
 #pragma region ‚R‚cİ’è‚Ì‚¨‚µ
-	VECTOR pos;
+	//VECTOR pos;
 #pragma region Step1F‹…‘Ì•\¦(‰A‰e‚ª‚ ‚é)
 	//pos = { 0.0f, 0.0f, 0.0f };
 	//DrawSphere3D(pos, 60.0f, 10, 0xff0000, 0xff0000, true);

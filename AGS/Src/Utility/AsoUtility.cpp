@@ -6,6 +6,8 @@
 #include <DxLib.h>
 #include "AsoUtility.h"
 
+static LONGLONG prevTime = 0;
+
 int AsoUtility::Round(float v)
 {
     return static_cast<int>(roundf(v));
@@ -535,3 +537,22 @@ void AsoUtility::DrawLineXYZ(const VECTOR& pos, const Quaternion& rot, float len
 }
 
 
+float AsoUtility::GetDeltaTime()
+{
+    LONGLONG nowTime = GetNowHiPerformanceCount();
+
+    if (prevTime == 0) prevTime = nowTime; // èââÒÇæÇØï‚ê≥
+
+    float deltaTime = (float)(nowTime - prevTime) / 1000000.0f; // ïb
+    prevTime = nowTime;
+
+    // à¿ëSëŒçÙÅiFPSÇ™ã…í[Ç…óéÇøÇΩéûÇÃÉèÅ[Évñhé~Åj
+    if (deltaTime > 0.033f) deltaTime = 0.033f; // 1/30ïbÇ™è„å¿
+
+    return deltaTime;
+}
+
+void AsoUtility::ResetDeltaTime()
+{
+    prevTime = GetNowHiPerformanceCount();
+}

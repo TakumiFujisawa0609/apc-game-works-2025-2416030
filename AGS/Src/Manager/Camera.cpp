@@ -1,6 +1,7 @@
 #include <EffekseerForDXLib.h>
 #include "../Utility/AsoUtility.h"
 #include "../Manager/InputManager.h"
+#include "SceneManager.h"
 #include "Camera.h"
 
 Camera::Camera(void)
@@ -87,6 +88,22 @@ void Camera::ChangeMode(MODE mode)
 
 VECTOR Camera::Move()
 {
+	// 回転--------------------------------
+	// 回転速度（ラジアン/秒）
+	float anglePowRad = AsoUtility::Deg2RadF(SPEED_ANGLE_DEG) * SceneManager::GetInstance().GetDeltaTime();
+
+	// 入力方向ベクトル
+	VECTOR angleDir = AsoUtility::VECTOR_ZERO;
+	if (CheckHitKey(KEY_INPUT_DOWN))  angleDir.x += 1.0f;
+	if (CheckHitKey(KEY_INPUT_UP))    angleDir.x -= 1.0f;
+	if (CheckHitKey(KEY_INPUT_RIGHT)) angleDir.y += 1.0f;
+	if (CheckHitKey(KEY_INPUT_LEFT))  angleDir.y -= 1.0f;
+
+	// 角度更新
+	angles_.x += angleDir.x * anglePowRad;
+	angles_.y += angleDir.y * anglePowRad;
+	//----------------------------------------
+
 	VECTOR moveDir = AsoUtility::VECTOR_ZERO;
 
 	// キーボード入力
@@ -96,21 +113,16 @@ VECTOR Camera::Move()
 	if (CheckHitKey(KEY_INPUT_D)) moveDir = VAdd(moveDir, AsoUtility::DIR_R);
 
 	// 入力があれば正規化
-	if (VSize(moveDir) > 0.0f) moveDir = VNorm(moveDir);
+	if (VSize(moveDir) <= 0.0f) return pos_;
+
+	moveDir = VNorm(moveDir);
 
 	// カメラ角度を反映した回転行列
 	MATRIX rot = MGetRotY(angles_.y);
 	moveDir = VTransform(moveDir, rot);
 
 	// 次の座標を計算
-	VECTOR nextPos = VAdd(pos_, VScale(moveDir, SPEED_MOVE));
-
-	// カメラ角度の回転処理（上下左右）
-	float anglePowRad = AsoUtility::Deg2RadF(SPEED_ANGLE_DEG);
-	if (CheckHitKey(KEY_INPUT_DOWN)) angles_.x += anglePowRad;
-	if (CheckHitKey(KEY_INPUT_UP))   angles_.x -= anglePowRad;
-	if (CheckHitKey(KEY_INPUT_RIGHT)) angles_.y += anglePowRad;
-	if (CheckHitKey(KEY_INPUT_LEFT))  angles_.y -= anglePowRad;
+	VECTOR nextPos = VAdd(pos_, VScale(moveDir, SPEED_MOVE * SceneManager::GetInstance().GetDeltaTime()));
 
 	return nextPos; // 更新はここではしない
 }
@@ -154,10 +166,10 @@ void Camera::SetBeforeDrawFree(void)
 	
 
 		// 右スティック上下の傾き
-		angles_.x -= dir.z * rotPow * 2.0f;
+		angles_.x -= dir.z * rotPow * 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 		// 右スティック上下の傾き
-		angles_.y += dir.x * rotPow * 2.0f;
+		angles_.y += dir.x * rotPow * 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 		if (!AsoUtility::EqualsVZero(dir2))
 		{
@@ -176,7 +188,7 @@ void Camera::SetBeforeDrawFree(void)
 			//angles_.y = atan2f(moveDir_.x, moveDir_.z);
 
 			// 方向×スピードで移動量を作って、座標に足して移動
-			pos_ = VAdd(pos_, VScale(moveDir_, SPEED_MOVE));
+			pos_ = VAdd(pos_, VScale(moveDir_, SPEED_MOVE * SceneManager::GetInstance().GetDeltaTime()));
 		}
 	}
 		// 接続されているゲームパッド１の情報を取得

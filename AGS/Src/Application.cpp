@@ -36,6 +36,15 @@ void Application::Init(void)
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
 	ChangeWindowMode(true);
 
+	SetGlobalAmbientLight(GetColorF(0.0f,0.0f,0.0f,1.0f));
+
+	SetLightEnable(FALSE); // 既存ライトOFF
+	SetGlobalAmbientLight(GetColorF(0.0f, 0.0f, 0.0f, 1.0f)); // 環境光ゼロ
+	SetBackgroundColor(0, 0, 0); // 背景も黒
+
+	// ScreenFlip を実行しても垂直同期信号を待たない
+	//SetWaitVSyncFlag(FALSE);
+
 	// DxLibの初期化
 	SetUseDirect3DVersion(DX_DIRECT3D_11);
 	isInitFail_ = false;
@@ -53,7 +62,10 @@ void Application::Init(void)
 
 	// 乱数の初期値を設定する
 	// 設定する数値によって、ランダムの出方が変わる
-	SRand(date.Year + date.Mon + date.Day + date.Hour + date.Min + date.Sec);
+	//SRand(date.Year + date.Mon + date.Day + date.Hour + date.Min + date.Sec);
+
+	// 乱数の初期化
+	srand((unsigned int)time(NULL));
 
 	// 入力制御初期化
 	SetUseDirectInputFlag(true);

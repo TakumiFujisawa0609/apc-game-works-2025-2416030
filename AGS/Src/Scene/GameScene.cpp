@@ -72,11 +72,11 @@ void GameScene::Update(void)
 		//	//}
 		//}
 		// à⁄ìÆ
-		circlePos_ = VAdd(circlePos_, VScale(moveDir_, powdddd));
+		circlePos_ = VAdd(circlePos_, VScale(moveDir_, powdddd * SceneManager::GetInstance().GetDeltaTime()));
 
-		circlePos_.y += pow;
-		circlePos_.x += movePow.x;
-		pow -= GRAVITY;
+		circlePos_.y += pow * SceneManager::GetInstance().GetDeltaTime();
+		circlePos_.x += movePow.x * SceneManager::GetInstance().GetDeltaTime();
+		pow -= GRAVITY * SceneManager::GetInstance().GetDeltaTime();
 	}
 
 	auto& ins = InputManager::GetInstance();
@@ -128,7 +128,7 @@ void GameScene::Update(void)
 	//	}
 	//	
 	//}
-	lightPow_ -= 0.001f;
+	lightPow_ -= 0.001f * SceneManager::GetInstance().GetDeltaTime();
 	//SceneManager::GetInstance().SetPointLightPos(lightPow_);
 
 	// î≠éÀÉLÅ[

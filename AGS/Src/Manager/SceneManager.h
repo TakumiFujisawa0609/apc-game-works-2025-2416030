@@ -99,6 +99,14 @@ private:
 
 	float lightPow_;
 
+	// delta time 用 ------
+	LONGLONG NowTime;
+	LONGLONG Time;
+	float DeltaTime;
+	int FPS;
+	int FPSCounter;
+	LONGLONG FPSCheckTime;
+	//---------------------
 	
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする
@@ -118,4 +126,6 @@ private:
 
 	// フェード
 	void Fade(void);
+	void DeltaTimeInit(void);
+	void DeltaTimeUpdate(void);
 };

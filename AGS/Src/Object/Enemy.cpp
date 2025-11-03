@@ -48,8 +48,73 @@ void Enemy::Release(void)
 
 void Enemy::Move()
 {
-	auto& camera = SceneManager::GetInstance();
+    auto& camera = SceneManager::GetInstance();
 
-	pos_ = camera.GetLightPos();
-	int a = 0;
+    int ran = GetRand(static_cast<int>(MOVE_SPOT::MAX) - 1); 
+    MOVE_SPOT spot = static_cast<MOVE_SPOT>(ran);
+
+    const VECTOR moveSpots[] = { SPOT1_POS, SPOT2_POS, SPOT3_POS };
+
+    if (!isMoveSpot_)
+    {
+        // ランダムにスポット選択
+        int r = GetRand(_countof(moveSpots) - 1);
+        targetPos_ = moveSpots[r];
+
+        isMoveSpot_ = true;
+    }
+    targetPos_.y = 0.0f; // 高さ固定
+
+    // 移動速度
+    float moveSpeed = 5.0f;
+
+    // 停止距離（この距離より近づいたら止まる）
+    const float stopDistance = 2.0f; // ← 好きな値に調整（例：2.0f = 2m 手前）
+
+    // DeltaTime取得
+    float dt = SceneManager::GetInstance().GetDeltaTime();
+
+    // 方向ベクトル（XZ平面）
+    VECTOR diff = VSub(targetPos_, pos_);
+    diff.y = 0.0f;
+    float dist = VSize(diff);
+
+    // stopDistance より遠いときだけ移動
+    if (dist > stopDistance)
+    {
+        // 実際に進む距離
+        float moveDist = moveSpeed * dt;
+
+        // 距離を超えないように調整
+        if (moveDist > dist - stopDistance) moveDist = dist - stopDistance;
+
+        // 正規化して移動ベクトル作成
+        VECTOR moveVec = VScale(VNorm(diff), moveDist);
+
+        // 位置更新
+        pos_ = VAdd(pos_, moveVec);
+    }
+
+    // --- 回転処理 ---
+    float angleY = atan2f(diff.x, diff.z);
+
+    // モデルの前方向が180度反対だった場合
+    const float angleOffset = DX_PI_F;
+    float finalAngleY = angleY + angleOffset;
+
+    MATRIX rotMat = MGetRotY(finalAngleY);
+
+    // 位置も反映
+    rotMat.m[3][0] = pos_.x;
+    rotMat.m[3][1] = pos_.y;
+    rotMat.m[3][2] = pos_.z;
+
+    // モデルに反映
+    MV1SetMatrix(modelId_, rotMat);
+
+    if (dist < arriveThreshold_)
+    {
+        // 到着！
+        isMoveSpot_ = false;
+    }
 }

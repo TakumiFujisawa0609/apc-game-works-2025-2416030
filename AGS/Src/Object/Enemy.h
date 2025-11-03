@@ -26,6 +26,23 @@ public:
 		MAX,
 	};
 
+	enum class MOVE_TYPE
+	{
+
+	};
+
+	enum class MOVE_SPOT
+	{
+		SPOT1,
+		SPOT2,
+		SPOT3,
+		MAX,
+	};
+
+	static constexpr VECTOR SPOT1_POS = { -60.0f, 300.0f, 4775.0f };
+	static constexpr VECTOR SPOT2_POS = { 0.0f, 300.0f, 0.0f };
+	static constexpr VECTOR SPOT3_POS = { 3060.0f, 300.0f, 4970.0f };
+
 	static constexpr float SPEED = 2.0f;
 
 	// コンストラクタ
@@ -37,6 +54,8 @@ public:
 	void Update(void);
 	void Draw(void);
 	void Release(void);
+
+	void SetTargetPos(VECTOR pos) { targetPos_ = pos; }
 private:
 	// アニメーションコントローラ
 	AnimationController* animationController_;
@@ -58,6 +77,11 @@ private:
 
 	// 移動速度
 	float speed_;
+
+	VECTOR targetPos_;
+
+	bool isMoveSpot_;
+	float arriveThreshold_ = 10.0f; // 到着判定距離
 
 	void Move();
 };
