@@ -143,9 +143,9 @@ void SceneManager::Update(void)
 	{
 		lightPow_ = 0.0001f;
 	}*/
-	if (lightPow_ < 0.004f)
+	if (lightPow_ < 0.01f)
 	{
-		//lightPow_ += 0.00002f;
+		lightPow_ += 0.00006f;
 	}
 	else
 	{
@@ -315,6 +315,7 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 
 	// ŠeƒV[ƒ“‚Ì‰Šú‰»
 	scene_->Init();
+	camera_->Init();
 
 	ResetDeltaTime();
 

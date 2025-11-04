@@ -48,73 +48,62 @@ void Enemy::Release(void)
 
 void Enemy::Move()
 {
-    auto& camera = SceneManager::GetInstance();
+	// デルタタイム
+	float dt = SceneManager::GetInstance().GetDeltaTime();
+	const float stopDistance = 2.0f;
+	const float moveSpeed = 5.0f;
 
-    int ran = GetRand(static_cast<int>(MOVE_SPOT::MAX) - 1); 
-    MOVE_SPOT spot = static_cast<MOVE_SPOT>(ran);
+	VECTOR diff;
 
-    const VECTOR moveSpots[] = { SPOT1_POS, SPOT2_POS, SPOT3_POS };
+	//--------------------------------
+	// targetPos_ が設定されている場合はそちらへ
+	//--------------------------------
+	if (isMoveSpot_)
+	{
+		// yは無視（平面）
+		diff = VSub(targetPos_, pos_);
+		diff.y = 0.0f;
+		float dist = VSize(diff);
 
-    if (!isMoveSpot_)
-    {
-        // ランダムにスポット選択
-        int r = GetRand(_countof(moveSpots) - 1);
-        targetPos_ = moveSpots[r];
+		if (dist > stopDistance)
+		{
+			VECTOR moveVec = VScale(VNorm(diff), moveSpeed * dt);
+			pos_ = VAdd(pos_, moveVec);
+		}
+		else
+		{
+			// 到着
+			isMoveSpot_ = false;
+		}
+	}
+	else
+	{
+		//--------------------------------
+		// ランダム移動（自動徘徊）
+		//--------------------------------
+		static const VECTOR moveSpots[] = { SPOT1_POS, SPOT2_POS, SPOT3_POS };
 
-        isMoveSpot_ = true;
-    }
-    targetPos_.y = 0.0f; // 高さ固定
+		int r = GetRand(_countof(moveSpots) - 1);
+		targetPos_ = moveSpots[r];
+		targetPos_.y = 0.0f;
 
-    // 移動速度
-    float moveSpeed = 5.0f;
+		isMoveSpot_ = true;
+		return; // 次フレームから追い始める
+	}
 
-    // 停止距離（この距離より近づいたら止まる）
-    const float stopDistance = 2.0f; // ← 好きな値に調整（例：2.0f = 2m 手前）
+	//--------------------------------
+	// 回転処理（ターゲット方向を向く）
+	//--------------------------------
+	float angleY = atan2f(diff.x, diff.z);
 
-    // DeltaTime取得
-    float dt = SceneManager::GetInstance().GetDeltaTime();
+	// モデルが反対向きなら補正
+	const float angleOffset = DX_PI_F;
+	float finalAngleY = angleY + angleOffset;
 
-    // 方向ベクトル（XZ平面）
-    VECTOR diff = VSub(targetPos_, pos_);
-    diff.y = 0.0f;
-    float dist = VSize(diff);
-
-    // stopDistance より遠いときだけ移動
-    if (dist > stopDistance)
-    {
-        // 実際に進む距離
-        float moveDist = moveSpeed * dt;
-
-        // 距離を超えないように調整
-        if (moveDist > dist - stopDistance) moveDist = dist - stopDistance;
-
-        // 正規化して移動ベクトル作成
-        VECTOR moveVec = VScale(VNorm(diff), moveDist);
-
-        // 位置更新
-        pos_ = VAdd(pos_, moveVec);
-    }
-
-    // --- 回転処理 ---
-    float angleY = atan2f(diff.x, diff.z);
-
-    // モデルの前方向が180度反対だった場合
-    const float angleOffset = DX_PI_F;
-    float finalAngleY = angleY + angleOffset;
-
-    MATRIX rotMat = MGetRotY(finalAngleY);
-
-    // 位置も反映
-    rotMat.m[3][0] = pos_.x;
-    rotMat.m[3][1] = pos_.y;
-    rotMat.m[3][2] = pos_.z;
-
-    // モデルに反映
-    MV1SetMatrix(modelId_, rotMat);
-
-    if (dist < arriveThreshold_)
-    {
-        // 到着！
-        isMoveSpot_ = false;
-    }
+	MATRIX rotMat = MGetRotY(finalAngleY);
+	rotMat.m[3][0] = pos_.x;
+	rotMat.m[3][1] = pos_.y;
+	rotMat.m[3][2] = pos_.z;
+	MV1SetMatrix(modelId_, rotMat);
 }
+

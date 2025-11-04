@@ -14,7 +14,7 @@ void Stage::Init(void)
 {
 	// 外部ファイルの３Ｄモデルをロード
 	modelId_ = MV1LoadModel(
-		(Application::PATH_MODEL + "Stage/UoStage.mv1").c_str());
+		(Application::PATH_MODEL + "Stage/2.mv1").c_str());
 
 	goalModelId_ = MV1LoadModel(
 		(Application::PATH_MODEL + "Stage/Goal.mv1").c_str());
