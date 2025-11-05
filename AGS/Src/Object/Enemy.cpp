@@ -46,6 +46,13 @@ void Enemy::Release(void)
 	MV1DeleteModel(modelId_);
 }
 
+VECTOR Enemy::GetHeadPos(void)
+{
+	auto headFrame = MV1SearchFrame(modelId_, "Head");
+	auto headPos = MV1GetFramePosition(modelId_, headFrame);
+	return headPos;
+}
+
 void Enemy::Move()
 {
 	// デルタタイム

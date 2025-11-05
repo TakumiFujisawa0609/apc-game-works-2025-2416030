@@ -55,7 +55,9 @@ public:
 	void Draw(void);
 	void Release(void);
 
-	void SetTargetPos(VECTOR pos) { targetPos_ = pos; isMoveSpot_ = false; }
+	void SetTargetPos(VECTOR pos) { targetPos_ = pos; isMoveSpot_ = true; }
+	VECTOR GetPos(void) { return pos_; }
+	VECTOR GetHeadPos(void);
 private:
 	// アニメーションコントローラ
 	AnimationController* animationController_;

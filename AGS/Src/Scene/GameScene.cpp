@@ -1,3 +1,4 @@
+ï»¿#include <algorithm>
 #include "../Utility/AsoUtility.h"
 #include "../Application.h"
 #include "../Manager/SceneManager.h"
@@ -23,7 +24,7 @@ void GameScene::Init(void)
 	enemy_ = new Enemy();
 	enemy_->Init();
 
-	// ƒJƒƒ‰‚ğƒtƒŠ[ƒ‚[ƒh‚É‚·‚é
+	// ã‚«ãƒ¡ãƒ©ã‚’ãƒ•ãƒªãƒ¼ãƒ¢ãƒ¼ãƒ‰ã«ã™ã‚‹
 	SceneManager::GetInstance().GetCamera().ChangeMode(Camera::MODE::FREE);
 
 	lightPow_ = 0.001f;
@@ -50,6 +51,7 @@ void GameScene::Update(void)
 		{
 			sceneMana.SetPointLightPos(circlePos_);
 			sceneMana.IsPointLightPow();
+			enemy_->SetTargetPos(circlePos_);
 			isCollision_ = true;
 			SceneManager::GetInstance().GetCamera().SetFarClip(1800.0f);
 			PlaySoundMem(seId_, DX_PLAYTYPE_BACK);
@@ -57,21 +59,21 @@ void GameScene::Update(void)
 	}
 	else
 	{
-		//// –ˆƒtƒŒ[ƒ€ˆÚ“®
+		//// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ç§»å‹•
 		//if (isShooting)
 		//{
 		//	
 
-		//	//// ”­Ë‹——£ƒ`ƒFƒbƒN
+		//	//// ç™ºå°„è·é›¢ãƒã‚§ãƒƒã‚¯
 		//	//VECTOR diff = VSub(circlePos_, startPos_);
 		//	//float traveled = VSize(diff);
 		//	//if (traveled >= maxDistance)
 		//	//{
 		//	//	isShooting = false;
-		//	//	powdddd = 0.0f;  // ”O‚Ì‚½‚ß‘¬“xƒŠƒZƒbƒg
+		//	//	powdddd = 0.0f;  // å¿µã®ãŸã‚é€Ÿåº¦ãƒªã‚»ãƒƒãƒˆ
 		//	//}
 		//}
-		// ˆÚ“®
+		// ç§»å‹•
 		circlePos_ = VAdd(circlePos_, VScale(moveDir_, powdddd * SceneManager::GetInstance().GetDeltaTime()));
 
 		circlePos_.y += pow * SceneManager::GetInstance().GetDeltaTime();
@@ -80,12 +82,12 @@ void GameScene::Update(void)
 	}
 
 	auto& ins = InputManager::GetInstance();
-	// Ú‘±‚³‚ê‚Ä‚¢‚éƒQ[ƒ€ƒpƒbƒh‚P‚Ìî•ñ‚ğæ“¾
+	// æ¥ç¶šã•ã‚Œã¦ã„ã‚‹ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ï¼‘ã®æƒ…å ±ã‚’å–å¾—
 	InputManager::JOYPAD_IN_STATE padState =
 		ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
 	
 
-	// ”­ËƒL[
+	// ç™ºå°„ã‚­ãƒ¼
 	if (CheckHitKey(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
 		isCollision_ = false;
@@ -106,11 +108,11 @@ void GameScene::Update(void)
 		circlePos_ = VAdd(cameraPos, moveDir_);
 
 		pow = 20.0f;
-		powdddd = 20.0f;  // ˆÚ“®‘¬“x
+		powdddd = 20.0f;  // ç§»å‹•é€Ÿåº¦
 		
 	}
 	
-	//// ƒoƒEƒ“ƒh
+	//// ãƒã‚¦ãƒ³ãƒ‰
 	//if (circlePos_.y - CIRCLE_RADIUS < 0.0f)
 	//{
 	//	auto& sceneMana = SceneManager::GetInstance();
@@ -131,13 +133,10 @@ void GameScene::Update(void)
 	lightPow_ -= 0.001f * SceneManager::GetInstance().GetDeltaTime();
 	//SceneManager::GetInstance().SetPointLightPos(lightPow_);
 
-	// ”­ËƒL[
+	// ç™ºå°„ã‚­ãƒ¼
 	
 	
-
-
-
-
+	Collision();
 }
 
 void GameScene::Draw(void)
@@ -147,14 +146,41 @@ void GameScene::Draw(void)
 
 	DrawSphere3D(circlePos_, CIRCLE_RADIUS, 10, 0xff0000, 0xff0000, true);
 	DrawFormatString(
-		0, 40, 0xFFFFFF, "‹…À•WF(%.2f, %.2f, %.2f)",
+		0, 40, 0xFFFFFF, "çƒåº§æ¨™ï¼š(%.2f, %.2f, %.2f)",
 		circlePos_.x, circlePos_.y, circlePos_.z);
 
 	auto cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
 
 	DrawFormatString(
-		0, 80, 0xFFFFFF, "ƒJƒƒ‰À•WF(%.2f, %.2f, %.2f)",
+		0, 80, 0xFFFFFF, "ã‚«ãƒ¡ãƒ©åº§æ¨™ï¼š(%.2f, %.2f, %.2f)",
 		cameraPos.x, cameraPos.y, cameraPos.z);
+
+	//auto iu = ConvWorldPosToScreenPos(enemy_->GetPos());
+
+	/*DrawFormatString(
+		0, 120, 0xFFFFFF, "æ•µåº§æ¨™ï¼š(%.2f, %.2f, %.2f)",
+		iu.x, iu.y, iu.z);
+	DrawCircle(iu.x, iu.y - 100.0f, 20.0f, GetColor(255, 255, 255), true);*/
+
+	auto ePos = enemy_->GetPos();
+	VECTOR diff = VSub(ePos, cameraPos);
+	auto a = VSize(diff);
+
+	if (a < 1000.0f) {
+		// è¿‘ã„ã¨ãã®å‡¦ç†
+		auto sd = enemy_->GetHeadPos();
+		float baseScale = 1.0f;          // å…ƒã®ã‚µã‚¤ã‚º
+		float maxDistance = 500.0f;      // ã‚¹ã‚±ãƒ¼ãƒ«å¤‰åŒ–ã•ã›ãŸã„æœ€å¤§è·é›¢
+
+		float t = 1.0f - (a / maxDistance);
+		t = std::clamp(t, 0.2f, 1.5f);   // ä¸‹é™0.2å€ã€œä¸Šé™1.5å€ãªã©åˆ¶é™
+
+		float scale = baseScale * t;
+
+		auto iu = ConvWorldPosToScreenPos(sd);
+		DrawFormatString(0, 120, 0xFFFFFF, "æ•µåº§æ¨™ï¼š(%.2f, %.2f, %.2f)", iu.x, iu.y, iu.z);
+		DrawCircle(iu.x, iu.y, 20.0f, GetColor(255, 0, 0), true);
+	}
 
 }
 
@@ -173,15 +199,15 @@ bool GameScene::CollisionCamera(VECTOR pos)
 {
 	auto& camera = SceneManager::GetInstance().GetCamera();
 
-	// Camera ‚ÌŸ‚ÌÀ•W‚ğæ“¾
+	// Camera ã®æ¬¡ã®åº§æ¨™ã‚’å–å¾—
 	VECTOR nextPos = camera.Move();
 
-	// Õ“Ë”»’è
+	// è¡çªåˆ¤å®š
 	int stageModelId = stage_->GetGoalModelId();
 	auto info = MV1CollCheck_Sphere(stageModelId, -1, nextPos, camera.CAMERA_RADIUS);
 	if (info.HitNum != 0)
 	{
-		// Õ“Ë‚È‚µ ¨ À•W‚ğŠm’è
+		// è¡çªãªã— â†’ åº§æ¨™ã‚’ç¢ºå®š
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::CLEAR);
 		return true;
 	}
@@ -191,13 +217,13 @@ bool GameScene::CollisionCamera(VECTOR pos)
 
 	if (info.HitNum == 0)
 	{
-		// Õ“Ë‚È‚µ ¨ À•W‚ğŠm’è
+		// è¡çªãªã— â†’ åº§æ¨™ã‚’ç¢ºå®š
 		camera.ApplyMove(nextPos);
 		return true;
 	}
 	else
 	{
-		// Õ“Ë‚ ‚è ¨ pos_ ‚ÍXV‚³‚ê‚È‚¢
+		// è¡çªã‚ã‚Š â†’ pos_ ã¯æ›´æ–°ã•ã‚Œãªã„
 	}
 
 	/*auto& camera = SceneManager::GetInstance().GetCamera();
@@ -218,35 +244,43 @@ bool GameScene::CollisionCamera(VECTOR pos)
 
 bool GameScene::Collision(void)
 {
-	// ƒXƒe[ƒWƒ‚ƒfƒ‹ID
+	// ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ¢ãƒ‡ãƒ«ID
 	int stageModelId = stage_->GetModelId();
-	// ’e‚ğæ“¾‚·‚é
+	// å¼¾ã‚’å–å¾—ã™ã‚‹
 	//std::vector<ShotBase*> shots = cannon_->GetShots();
 	//for (ShotBase* shot : shots)
 	{
 		//if (!shot->IsCollisionState())
 		//{
-		//	// ”š”­’†‚âˆ—I—¹Œã‚ÍAˆÈ~‚Ìˆ—‚ÍÀs‚µ‚È‚¢
+		//	// çˆ†ç™ºä¸­ã‚„å‡¦ç†çµ‚äº†å¾Œã¯ã€ä»¥é™ã®å‡¦ç†ã¯å®Ÿè¡Œã—ãªã„
 		//	continue;
 		//}
-		// ƒXƒe[ƒWƒ‚ƒfƒ‹‚Æ‚ÌÕ“Ë”»’è
+		// ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ¢ãƒ‡ãƒ«ã¨ã®è¡çªåˆ¤å®š
 		
 	}
 	auto info = MV1CollCheck_Sphere(
 		stageModelId, -1, circlePos_, CIRCLE_RADIUS);
+	auto cPos = SceneManager::GetInstance().GetCamera().GetPos();
+	cPos.y -= 300.0f;
+	if (AsoUtility::IsHitSpheres(cPos, 20.0f, enemy_->GetPos(), 20.0f))
+	{
+		int a = 0;
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+	}
+
 	if (info.HitNum > 0)
 	{
 		//shot->Blast();
 		int a = 0;
-		// “–‚½‚è”»’èŒ‹‰Êƒ|ƒŠƒSƒ“”z—ñ‚ÌŒãn––‚ğ‚·‚é
+		// å½“ãŸã‚Šåˆ¤å®šçµæœãƒãƒªã‚´ãƒ³é…åˆ—ã®å¾Œå§‹æœ«ã‚’ã™ã‚‹
 		MV1CollResultPolyDimTerminate(info);
 		return true;
 
-		//	// --- •ÇE°‚È‚Ç‚Ì‘S‚Ä‚ÌÕ“Ëƒ|ƒŠƒSƒ“‚ğŒ©‚é ---
+		//	// --- å£ãƒ»åºŠãªã©ã®å…¨ã¦ã®è¡çªãƒãƒªã‚´ãƒ³ã‚’è¦‹ã‚‹ ---
 		//	for (int i = 0; i < info.HitNum; i++)
 		//	{
 		//		auto& hit = info.Dim[i];
-		//		// ƒ|ƒŠƒSƒ“‚Ì’†S‚ğŒvZ
+		//		// ãƒãƒªã‚´ãƒ³ã®ä¸­å¿ƒã‚’è¨ˆç®—
 		//		VECTOR hitPos = {
 		//			(hit.Position[0].x + hit.Position[1].x + hit.Position[2].x) / 3.0f,
 		//			(hit.Position[0].y + hit.Position[1].y + hit.Position[2].y) / 3.0f,
@@ -254,22 +288,22 @@ bool GameScene::Collision(void)
 		//		};
 		//		VECTOR hitNormal = hit.Normal;
 
-		//		// ----------- •Ç‚Æ‚ÌÕ“Ëi‰¡•ûŒü‚Ìƒ|ƒŠƒSƒ“j -----------
-		//		// ° / “Vˆä ‚Å‚Í‚È‚¢ê‡ = ‰¡‚Ì•Ç
-		//		if (fabs(hitNormal.y) < 0.5f) // ‰¡•Ç‚Ì–@ü‚ÍY¬•ª‚ª¬‚³‚¢
+		//		// ----------- å£ã¨ã®è¡çªï¼ˆæ¨ªæ–¹å‘ã®ãƒãƒªã‚´ãƒ³ï¼‰ -----------
+		//		// åºŠ / å¤©äº• ã§ã¯ãªã„å ´åˆ = æ¨ªã®å£
+		//		if (fabs(hitNormal.y) < 0.5f) // æ¨ªå£ã®æ³•ç·šã¯Yæˆåˆ†ãŒå°ã•ã„
 		//		{
-		//			// ‚ß‚è‚İ–h~F–@ü•ûŒü‚É‰Ÿ‚µ–ß‚·
-		//			float pushBack = 2.0f; // ‰Ÿ‚µ–ß‚µŒW”i‘å‚«‚¯‚ê‚Î‹­‚­‰Ÿ‚µ•Ô‚·j
+		//			// ã‚ã‚Šè¾¼ã¿é˜²æ­¢ï¼šæ³•ç·šæ–¹å‘ã«æŠ¼ã—æˆ»ã™
+		//			float pushBack = 2.0f; // æŠ¼ã—æˆ»ã—ä¿‚æ•°ï¼ˆå¤§ãã‘ã‚Œã°å¼·ãæŠ¼ã—è¿”ã™ï¼‰
 		//			circlePos_ = VAdd(circlePos_, VScale(hitNormal, pushBack));
 
-		//			// •Ç‚É“–‚½‚Á‚½‚Æ‚«‚ÌŒ¸‘¬
+		//			// å£ã«å½“ãŸã£ãŸã¨ãã®æ¸›é€Ÿ
 		//			powdddd /= 1.5f;
 
-		//			// ‚±‚±‚Å’µ‚Ë•Ô‚µSE‚Æ‚©‚Â‚¯‚Ä‚àOK
+		//			// ã“ã“ã§è·³ã­è¿”ã—SEã¨ã‹ã¤ã‘ã¦ã‚‚OK
 		//		}
 		//	}
 
-		//	// ƒoƒEƒ“ƒh
+		//	// ãƒã‚¦ãƒ³ãƒ‰
 		//if (circlePos_.y - CIRCLE_RADIUS < 0.0f)
 		//{
 		//	auto& sceneMana = SceneManager::GetInstance();
@@ -288,7 +322,7 @@ bool GameScene::Collision(void)
 		//	
 		//}
 		//}
-		// “–‚½‚è”»’èŒ‹‰Êƒ|ƒŠƒSƒ“”z—ñ‚ÌŒãn––‚ğ‚·‚é
+		// å½“ãŸã‚Šåˆ¤å®šçµæœãƒãƒªã‚´ãƒ³é…åˆ—ã®å¾Œå§‹æœ«ã‚’ã™ã‚‹
 		//MV1CollResultPolyDimTerminate(info);
 	}
 	return false;
