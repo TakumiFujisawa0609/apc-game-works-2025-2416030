@@ -86,6 +86,8 @@ private:
 
 	float farClip_ = 0;
 
+	int footSeId_;
+
 	// ƒJƒƒ‰ƒ‚[ƒh•Ê‚Ì§Œäˆ—
 	void SetBeforeDrawFixedPoint(void);
 	void SetBeforeDrawFree(void);

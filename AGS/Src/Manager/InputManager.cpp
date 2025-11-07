@@ -21,6 +21,12 @@ InputManager& InputManager::GetInstance(void)
 	return *instance_;
 }
 
+void InputManager::DeleteInstance(void)
+{
+	delete instance_;
+	instance_ = nullptr;
+}
+
 void InputManager::Init(void)
 {
 

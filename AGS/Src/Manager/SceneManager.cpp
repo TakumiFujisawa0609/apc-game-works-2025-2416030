@@ -23,6 +23,12 @@ SceneManager& SceneManager::GetInstance(void)
 	return *instance_;
 }
 
+void SceneManager::DeleteInstance(void)
+{
+	delete instance_;
+	instance_ = nullptr;
+}
+
 void SceneManager::Init(void)
 {
 
@@ -146,7 +152,7 @@ void SceneManager::Update(void)
 	}*/
 	if (lightPow_ < 0.01f)
 	{
-		lightPow_ += 0.00006f;
+		lightPow_ += 0.00006f * GetDeltaTime();
 	}
 	else
 	{
@@ -186,12 +192,12 @@ void SceneManager::Draw(void)
 	fader_->Draw();
 
 #pragma region Step1 ポイントライト
-	if (CheckHitKey(KEY_INPUT_T)) { pointLightPos_.z = 3.0f; }
+	/*if (CheckHitKey(KEY_INPUT_T)) { pointLightPos_.z = 3.0f; }
 	if (CheckHitKey(KEY_INPUT_G)) { pointLightPos_.z -= 3.0f; }
 	if (CheckHitKey(KEY_INPUT_R)) { pointLightPos_.y += 3.0f; }
 	if (CheckHitKey(KEY_INPUT_Y)) { pointLightPos_.y -= 3.0f; }
 	if (CheckHitKey(KEY_INPUT_H)) { pointLightPos_.x += 3.0f; }
-	if (CheckHitKey(KEY_INPUT_F)) { pointLightPos_.x -= 3.0f; }
+	if (CheckHitKey(KEY_INPUT_F)) { pointLightPos_.x -= 3.0f; }*/
 	
 	SetLightPosition(pointLightPos_);
 	

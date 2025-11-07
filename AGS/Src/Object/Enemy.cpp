@@ -37,6 +37,9 @@ void Enemy::Update(void)
 
 void Enemy::Draw(void)
 {
+	//MV1SetMaterialOutLineWidth(modelId_, 2.0f);   // —ÖŠsü‚ğ‘¾‚ß‚É
+	//MV1SetMaterialOutLineColor(modelId_, GetColor(255, 0, 0));  // Ô‚¢‰æ‚è‚È‚Ç
+	//MV1SetUseOrigShader(TRUE);  // ƒ‚ƒfƒ‹‚Ì‰A‰e‚ğƒIƒt
 	MV1DrawModel(modelId_);
 }
 

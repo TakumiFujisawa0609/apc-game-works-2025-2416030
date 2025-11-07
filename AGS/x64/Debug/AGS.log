@@ -1,5 +1,5 @@
 ﻿  GameScene.cpp
-C:\Project\AGS_Winter\AGS\Src\Scene\GameScene.cpp(182,26): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-C:\Project\AGS_Winter\AGS\Src\Scene\GameScene.cpp(182,22): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-C:\Project\AGS_Winter\AGS\Src\Scene\GameScene.cpp(182,16): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Project\AGS_Winter\AGS\Src\Scene\GameScene.cpp(184,26): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Project\AGS_Winter\AGS\Src\Scene\GameScene.cpp(184,22): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Project\AGS_Winter\AGS\Src\Scene\GameScene.cpp(184,16): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
   AGS.vcxproj -> C:\Project\AGS_Winter\AGS\x64\Debug\AGS.exe

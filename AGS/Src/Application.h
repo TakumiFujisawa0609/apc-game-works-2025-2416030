@@ -25,6 +25,9 @@ public:
 	// インスタンスの取得
 	static Application& GetInstance(void);
 
+	// インスタンスの削除
+	static void DeleteInstance(void);
+
 	// 初期化
 	void Init(void);
 

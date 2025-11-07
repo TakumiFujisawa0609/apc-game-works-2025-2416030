@@ -1,6 +1,7 @@
 #include <EffekseerForDXLib.h>
 #include "../Utility/AsoUtility.h"
 #include "../Manager/InputManager.h"
+#include "../Application.h"
 #include "SceneManager.h"
 #include "Camera.h"
 
@@ -21,6 +22,8 @@ void Camera::Init(void)
 
 	farClip_ = CAMERA_FAR;
 	farClip_ = 100.0f;
+
+	footSeId_ = LoadSoundMem((Application::PATH_SE + "FootStep.mp3").c_str());
 }
 
 // 更新
@@ -100,7 +103,7 @@ VECTOR Camera::Move()
 	if (CheckHitKey(KEY_INPUT_LEFT))  angleDir.y -= 1.0f;
 
 	// 角度更新
-	angles_.x += angleDir.x * anglePowRad;
+	//angles_.x += angleDir.x * anglePowRad;
 	angles_.y += angleDir.y * anglePowRad;
 	//----------------------------------------
 
@@ -113,7 +116,16 @@ VECTOR Camera::Move()
 	if (CheckHitKey(KEY_INPUT_D)) moveDir = VAdd(moveDir, AsoUtility::DIR_R);
 
 	// 入力があれば正規化
-	if (VSize(moveDir) <= 0.0f) return pos_;
+	if (VSize(moveDir) <= 0.0f) 
+	{
+		if (CheckSoundMem(footSeId_))StopSoundMem(footSeId_);
+		return pos_;
+	}
+
+	if (!CheckSoundMem(footSeId_))
+	{
+		PlaySoundMem(footSeId_, DX_PLAYTYPE_LOOP);
+	}
 
 	moveDir = VNorm(moveDir);
 

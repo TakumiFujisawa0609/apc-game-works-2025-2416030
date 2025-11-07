@@ -76,7 +76,7 @@ void GameScene::Update(void)
 		// 移動
 		circlePos_ = VAdd(circlePos_, VScale(moveDir_, powdddd * SceneManager::GetInstance().GetDeltaTime()));
 
-		circlePos_.y += pow * SceneManager::GetInstance().GetDeltaTime();
+		//circlePos_.y += pow * SceneManager::GetInstance().GetDeltaTime();
 		circlePos_.x += movePow.x * SceneManager::GetInstance().GetDeltaTime();
 		pow -= GRAVITY * SceneManager::GetInstance().GetDeltaTime();
 	}
@@ -100,7 +100,7 @@ void GameScene::Update(void)
 
 
 		mat = MGetIdent();
-		mat = MMult(mat, MGetRotX(cameraAngle.x));
+		mat = MMult(mat, MGetRotX(cameraAngle.x * 0.5f));
 		mat = MMult(mat, MGetRotY(cameraAngle.y));
 		//moveDir_ = VTransform({ 0.0f,0.0f,1.0f }, mat);
 		moveDir_ = VTransform({ 0.0f,0.0f,1.0f }, mat);
@@ -142,7 +142,6 @@ void GameScene::Update(void)
 void GameScene::Draw(void)
 {
 	stage_->Draw();
-	enemy_->Draw();
 
 	DrawSphere3D(circlePos_, CIRCLE_RADIUS, 10, 0xff0000, 0xff0000, true);
 	DrawFormatString(
@@ -165,6 +164,9 @@ void GameScene::Draw(void)
 	auto ePos = enemy_->GetPos();
 	VECTOR diff = VSub(ePos, cameraPos);
 	auto a = VSize(diff);
+
+	//if (CheckCameraViewClip(ePos)) return;
+	enemy_->Draw();
 
 	if (a < 1000.0f) {
 		// 近いときの処理

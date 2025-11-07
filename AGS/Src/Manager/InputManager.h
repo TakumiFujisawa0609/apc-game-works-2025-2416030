@@ -73,6 +73,9 @@ public:
 	// インスタンスの取得
 	static InputManager& GetInstance(void);
 
+	// インスタンスの削除
+	static void DeleteInstance(void);
+
 	// 初期化
 	void Init(void);
 

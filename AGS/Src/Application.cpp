@@ -26,6 +26,15 @@ Application& Application::GetInstance(void)
 	return *instance_;
 }
 
+void Application::DeleteInstance(void)
+{
+	if (instance_ != nullptr)
+	{
+		delete instance_;
+		instance_ = nullptr;
+	}
+}
+
 void Application::Init(void)
 {
 
@@ -43,7 +52,7 @@ void Application::Init(void)
 	SetBackgroundColor(0, 0, 0); // ”wŒi‚à•
 
 	// ScreenFlip ‚ğÀs‚µ‚Ä‚à‚’¼“¯ŠúM†‚ğ‘Ò‚½‚È‚¢
-	//SetWaitVSyncFlag(FALSE);
+	SetWaitVSyncFlag(FALSE);
 
 	// DxLib‚Ì‰Šú‰»
 	SetUseDirect3DVersion(DX_DIRECT3D_11);

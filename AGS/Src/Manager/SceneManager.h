@@ -30,6 +30,9 @@ public:
 	// インスタンスの取得
 	static SceneManager& GetInstance(void);
 
+	// インスタンスの削除
+	static void DeleteInstance(void);
+
 	// 初期化
 	void Init(void);
 
