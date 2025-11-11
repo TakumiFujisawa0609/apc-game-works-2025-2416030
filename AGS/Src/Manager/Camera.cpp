@@ -41,10 +41,10 @@ void Camera::SetBeforeDraw(void)
 	switch (mode_)
 	{
 	case Camera::MODE::FIXED_POINT:
-		SetBeforeDrawFixedPoint();
+		//SetBeforeDrawFixedPoint();
 		break;
 	case Camera::MODE::FREE:
-		SetBeforeDrawFree();
+		//SetBeforeDrawFree();
 		break;
 	}
 
@@ -91,42 +91,63 @@ void Camera::ChangeMode(MODE mode)
 
 VECTOR Camera::Move()
 {
+	auto& ins = InputManager::GetInstance();
+
 	// 回転--------------------------------
-	// 回転速度（ラジアン/秒）
 	float anglePowRad = AsoUtility::Deg2RadF(SPEED_ANGLE_DEG) * SceneManager::GetInstance().GetDeltaTime();
 
-	// 入力方向ベクトル
+	// 入力方向ベクトル（キーボード）
 	VECTOR angleDir = AsoUtility::VECTOR_ZERO;
-	if (CheckHitKey(KEY_INPUT_DOWN))  angleDir.x += 1.0f;
-	if (CheckHitKey(KEY_INPUT_UP))    angleDir.x -= 1.0f;
 	if (CheckHitKey(KEY_INPUT_RIGHT)) angleDir.y += 1.0f;
 	if (CheckHitKey(KEY_INPUT_LEFT))  angleDir.y -= 1.0f;
 
+	// ゲームパッド右スティックで回転
+	if (GetJoypadNum() > 0)
+	{
+		auto padState = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+		VECTOR rightStick = ins.GetDirectionXZAKey(padState.AKeyRX, padState.AKeyRY);
+		angles_.y += rightStick.x * anglePowRad * 2.0f; // 横回転
+		// angles_.x -= rightStick.z * anglePowRad * 2.0f; // 縦回転（必要なら）
+	}
+
 	// 角度更新
-	//angles_.x += angleDir.x * anglePowRad;
 	angles_.y += angleDir.y * anglePowRad;
 	//----------------------------------------
 
 	VECTOR moveDir = AsoUtility::VECTOR_ZERO;
 
-	// キーボード入力
+	// キーボード入力（WASD）
 	if (CheckHitKey(KEY_INPUT_W)) moveDir = VAdd(moveDir, AsoUtility::DIR_F);
 	if (CheckHitKey(KEY_INPUT_S)) moveDir = VAdd(moveDir, AsoUtility::DIR_B);
 	if (CheckHitKey(KEY_INPUT_A)) moveDir = VAdd(moveDir, AsoUtility::DIR_L);
 	if (CheckHitKey(KEY_INPUT_D)) moveDir = VAdd(moveDir, AsoUtility::DIR_R);
 
-	// 入力があれば正規化
-	if (VSize(moveDir) <= 0.0f) 
+	// ゲームパッド左スティック入力
+	if (GetJoypadNum() > 0)
 	{
-		if (CheckSoundMem(footSeId_))StopSoundMem(footSeId_);
+		auto padState = ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+		VECTOR leftStick = ins.GetDirectionXZAKey(padState.AKeyLX, padState.AKeyLY);
+
+		if (!AsoUtility::EqualsVZero(leftStick))
+		{
+			moveDir = VAdd(moveDir, leftStick);
+		}
+	}
+
+	// 入力がなければ停止
+	if (VSize(moveDir) <= 0.0f)
+	{
+		if (CheckSoundMem(footSeId_)) StopSoundMem(footSeId_);
 		return pos_;
 	}
 
+	// 足音ループ
 	if (!CheckSoundMem(footSeId_))
 	{
 		PlaySoundMem(footSeId_, DX_PLAYTYPE_LOOP);
 	}
 
+	// 正規化
 	moveDir = VNorm(moveDir);
 
 	// カメラ角度を反映した回転行列
@@ -136,8 +157,9 @@ VECTOR Camera::Move()
 	// 次の座標を計算
 	VECTOR nextPos = VAdd(pos_, VScale(moveDir, SPEED_MOVE * SceneManager::GetInstance().GetDeltaTime()));
 
-	return nextPos; // 更新はここではしない
+	return nextPos;
 }
+
 
 void Camera::ApplyMove(const VECTOR& newPos)
 {
@@ -178,7 +200,7 @@ void Camera::SetBeforeDrawFree(void)
 	
 
 		// 右スティック上下の傾き
-		angles_.x -= dir.z * rotPow * 2.0f * SceneManager::GetInstance().GetDeltaTime();
+		//angles_.x -= dir.z * rotPow * 2.0f * SceneManager::GetInstance().GetDeltaTime();
 
 		// 右スティック上下の傾き
 		angles_.y += dir.x * rotPow * 2.0f * SceneManager::GetInstance().GetDeltaTime();

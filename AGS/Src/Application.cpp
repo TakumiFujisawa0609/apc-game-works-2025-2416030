@@ -52,7 +52,7 @@ void Application::Init(void)
 	SetBackgroundColor(0, 0, 0); // 背景も黒
 
 	// ScreenFlip を実行しても垂直同期信号を待たない
-	SetWaitVSyncFlag(FALSE);
+	//SetWaitVSyncFlag(FALSE);
 
 	// DxLibの初期化
 	SetUseDirect3DVersion(DX_DIRECT3D_11);
@@ -94,7 +94,7 @@ void Application::Run(void)
 	SceneManager& sceneManager = SceneManager::GetInstance();
 
 	// ゲームループ
-	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
+	while (ProcessMessage() == 0 && !isGameEnd_)
 	{
 
 		inputManager.Update();
@@ -142,4 +142,5 @@ Application::Application(void)
 {
 	isInitFail_ = false;
 	isReleaseFail_ = false;
+	isGameEnd_ = false;
 }

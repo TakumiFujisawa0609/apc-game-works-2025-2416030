@@ -24,7 +24,7 @@ public:
 	static constexpr VECTOR DEFAULT_POS = { 0.0f, 300.0f, -500.0f };
 
 	// カメラの初期角度
-	static constexpr VECTOR DEFAULT_ANGLES = { 17.0f * DX_PI_F / 180.0f, 0.0f, 0.0f };
+	static constexpr VECTOR DEFAULT_ANGLES = { 15.0f * DX_PI_F / 180.0f, 0.0f, 0.0f };
 
 	//// カメラの初期位置
 	//static constexpr VECTOR DEFAULT_POS = { 360.0f, 320.0f, -360.0f };

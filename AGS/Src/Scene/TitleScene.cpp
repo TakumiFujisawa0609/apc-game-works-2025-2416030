@@ -8,8 +8,10 @@
 #include "TitleScene.h"
 
 TitleScene::TitleScene(void)
+	:
+	grid_(nullptr),
+	imgTitle_(-1)
 {
-	imgTitle_ = -1;
 }
 
 TitleScene::~TitleScene(void)
@@ -33,6 +35,11 @@ void TitleScene::Update(void)
 	if (ins.IsTrgDown(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+	}
+
+	if (CheckHitKey(KEY_INPUT_ESCAPE) == 1)
+	{
+		Application::GetInstance().GameEnd();
 	}
 }
 

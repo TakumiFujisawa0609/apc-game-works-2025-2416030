@@ -1,12 +1,12 @@
-﻿#include <algorithm>
+﻿
 #include "../Utility/AsoUtility.h"
-#include "../Application.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Stage.h"
 #include "../Object/Enemy.h"
 #include "../Manager/Camera.h"
 #include "GameScene.h"
+#include <algorithm>
 
 GameScene::GameScene(void)
 {
@@ -30,10 +30,46 @@ void GameScene::Init(void)
 	lightPow_ = 0.001f;
 
 	seId_ = LoadSoundMem((Application::PATH_SE + "Aura.mp3").c_str());
+
+	pauseMenu_ = new PauseMenu();
+
+	isMove = false;
+
+	rePress = newPress = 0;
 }
 
 void GameScene::Update(void)
 {
+	auto& ins = InputManager::GetInstance();
+
+	// 接続されているゲームパッド１の情報を取得
+	InputManager::JOYPAD_IN_STATE padState =
+		ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+
+	rePress = newPress;
+	newPress = ins.IsNew(KEY_INPUT_P);
+
+	if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP))
+	{
+		printfDx("Pad TOP Trigger\n");
+	}
+	if (ins.IsTrgDown(KEY_INPUT_UP))
+	{
+		printfDx("Keyboard UP Trigger\n");
+	}
+
+	// Pキーでポーズ切り替え
+	if ((rePress == 0 && newPress == 1))
+	{
+		pauseMenu_->Toggle();
+	}
+
+	if (pauseMenu_->IsActive())
+	{
+		pauseMenu_->Update();
+		return; // ポーズ中はゲーム更新停止
+	}
+
 	auto cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
 	auto cameraAngle = SceneManager::GetInstance().GetCamera().GetAngle();
 	bool isCollision = Collision();
@@ -49,20 +85,19 @@ void GameScene::Update(void)
 		//int a = 0;
 		if (!isCollision_)
 		{
+			// 接地
 			sceneMana.SetPointLightPos(circlePos_);
 			sceneMana.IsPointLightPow();
 			enemy_->SetTargetPos(circlePos_);
 			isCollision_ = true;
 			SceneManager::GetInstance().GetCamera().SetFarClip(1800.0f);
 			PlaySoundMem(seId_, DX_PLAYTYPE_BACK);
+			isMove = false;
 		}
 	}
 	else
 	{
-		//// 毎フレーム移動
-		//if (isShooting)
-		//{
-		//	
+		// 動く
 
 		//	//// 発射距離チェック
 		//	//VECTOR diff = VSub(circlePos_, startPos_);
@@ -76,23 +111,22 @@ void GameScene::Update(void)
 		// 移動
 		circlePos_ = VAdd(circlePos_, VScale(moveDir_, powdddd * SceneManager::GetInstance().GetDeltaTime()));
 
-		//circlePos_.y += pow * SceneManager::GetInstance().GetDeltaTime();
 		circlePos_.x += movePow.x * SceneManager::GetInstance().GetDeltaTime();
 		pow -= GRAVITY * SceneManager::GetInstance().GetDeltaTime();
-	}
 
-	auto& ins = InputManager::GetInstance();
-	// 接続されているゲームパッド１の情報を取得
-	InputManager::JOYPAD_IN_STATE padState =
-		ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
+		circlePos_.y += pow * SceneManager::GetInstance().GetDeltaTime();
+
+		isMove = true;
+	}
 	
 
 	// 発射キー
-	if (CheckHitKey(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
+	if ((CheckHitKey(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
+		&& !isMove)
 	{
 		isCollision_ = false;
 		isShooting = true;
-		//startPos_ = cameraPos;
+		startPos_ = cameraPos;
 
 		MATRIX mat = MGetIdent();
 		//mat = MMult(mat, MGetRotY(cameraAngle.y));
@@ -106,8 +140,9 @@ void GameScene::Update(void)
 		moveDir_ = VTransform({ 0.0f,0.0f,1.0f }, mat);
 
 		circlePos_ = VAdd(cameraPos, moveDir_);
+		//isMove += powdddd;
 
-		pow = 20.0f;
+		pow = 00.0f;
 		powdddd = 20.0f;  // 移動速度
 		
 	}
@@ -137,22 +172,44 @@ void GameScene::Update(void)
 	
 	
 	Collision();
+
+	if (isMove)
+	{
+		auto& camera = SceneManager::GetInstance().GetCamera();
+
+		// 投げた位置から今の球までの距離を算出
+		float dist = VSize(VSub(circlePos_, startPos_));
+
+		// FarClipを距離に応じて設定（最小値を確保）
+		camera.SetFarClip(dist);
+	}
 }
 
 void GameScene::Draw(void)
 {
 	stage_->Draw();
 
-	DrawSphere3D(circlePos_, CIRCLE_RADIUS, 10, 0xff0000, 0xff0000, true);
+	if(isMove)
+	{
+		// ライトを一時的に無効化
+		SetUseLighting(FALSE);
+		// 球を描画（常に明るく見える）
+		DrawSphere3D(circlePos_, CIRCLE_RADIUS, 10, 0xff0000, 0xffffff, TRUE);
+		// ライトを元に戻す
+		SetUseLighting(TRUE);
+	}
+	auto cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
+#ifdef DEBUG
 	DrawFormatString(
 		0, 40, 0xFFFFFF, "球座標：(%.2f, %.2f, %.2f)",
 		circlePos_.x, circlePos_.y, circlePos_.z);
 
-	auto cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
-
 	DrawFormatString(
 		0, 80, 0xFFFFFF, "カメラ座標：(%.2f, %.2f, %.2f)",
 		cameraPos.x, cameraPos.y, cameraPos.z);
+#endif // DEBUG
+
+	
 
 	//auto iu = ConvWorldPosToScreenPos(enemy_->GetPos());
 
@@ -166,24 +223,30 @@ void GameScene::Draw(void)
 	auto a = VSize(diff);
 
 	//if (CheckCameraViewClip(ePos)) return;
+	//SceneManager::GetInstance().GetCamera().SetFarClip(moveNum);
 	enemy_->Draw();
+	SetUseZBuffer3D(TRUE);
+	
 
-	if (a < 1000.0f) {
-		// 近いときの処理
-		auto sd = enemy_->GetHeadPos();
-		float baseScale = 1.0f;          // 元のサイズ
-		float maxDistance = 500.0f;      // スケール変化させたい最大距離
+	//if (a < 1000.0f) {
+	//	// 近いときの処理
+	//	auto sd = enemy_->GetHeadPos();
+	//	float baseScale = 1.0f;          // 元のサイズ
+	//	float maxDistance = 500.0f;      // スケール変化させたい最大距離
 
-		float t = 1.0f - (a / maxDistance);
-		t = std::clamp(t, 0.2f, 1.5f);   // 下限0.2倍〜上限1.5倍など制限
+	//	float t = 1.0f - (a / maxDistance);
+	//	t = std::clamp(t, 0.2f, 1.5f);   // 下限0.2倍〜上限1.5倍など制限
 
-		float scale = baseScale * t;
+	//	float scale = baseScale * t;
 
-		auto iu = ConvWorldPosToScreenPos(sd);
-		DrawFormatString(0, 120, 0xFFFFFF, "敵座標：(%.2f, %.2f, %.2f)", iu.x, iu.y, iu.z);
-		DrawCircle(iu.x, iu.y, 20.0f, GetColor(255, 0, 0), true);
-	}
+	//	auto iu = ConvWorldPosToScreenPos(sd);
+	//	DrawFormatString(0, 120, 0xFFFFFF, "敵座標：(%.2f, %.2f, %.2f)", iu.x, iu.y, iu.z);
+	//	DrawCircle(iu.x, iu.y, 20.0f, GetColor(255, 0, 0), true);
+	//}
 
+	pauseMenu_->Draw();
+
+	auto iu = ConvWorldPosToScreenPos(circlePos_);
 }
 
 void GameScene::Release(void)

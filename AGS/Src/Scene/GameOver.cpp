@@ -24,6 +24,11 @@ void GameOver::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
+
+	if (CheckHitKey(KEY_INPUT_ESCAPE) == 1)
+	{
+		Application::GetInstance().GameEnd();
+	}
 }
 
 void GameOver::Draw(void)

@@ -152,7 +152,7 @@ void SceneManager::Update(void)
 	}*/
 	if (lightPow_ < 0.01f)
 	{
-		lightPow_ += 0.00006f * GetDeltaTime();
+		lightPow_ += 0.00004f * GetDeltaTime();
 	}
 	else
 	{

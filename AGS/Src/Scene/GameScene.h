@@ -18,7 +18,7 @@ public:
 	constexpr static float NEXTWAVE_MOVE_SPEED = 10.0f;
 	constexpr static float NEXTWAVE_STOP_TIME = 1.0f;
 
-	constexpr static float GRAVITY = 0.5f;
+	constexpr static float GRAVITY = 0.08f;
 
 	constexpr static float CIRCLE_RADIUS = 80.0f;
 
@@ -61,6 +61,9 @@ private:
 
 	VECTOR startPos_;  // 発射開始位置
 	float maxDistance = 1000.0f;  // これ以上飛んだら停止
+	bool isMove;
+
+	int rePress, newPress;
 
 	bool Collision(void);
 
