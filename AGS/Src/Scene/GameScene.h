@@ -58,6 +58,7 @@ private:
 	bool isShooting = false;
 
 	int seId_;
+	int footSeId_;
 
 	VECTOR startPos_;  // 発射開始位置
 	float maxDistance = 1000.0f;  // これ以上飛んだら停止

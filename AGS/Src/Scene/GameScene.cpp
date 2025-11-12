@@ -36,6 +36,8 @@ void GameScene::Init(void)
 	isMove = false;
 
 	rePress = newPress = 0;
+
+	footSeId_ = LoadSoundMem((Application::PATH_SE + "FootStep.mp3").c_str());
 }
 
 void GameScene::Update(void)
@@ -70,6 +72,22 @@ void GameScene::Update(void)
 		return; // ポーズ中はゲーム更新停止
 	}
 
+	if (SceneManager::GetInstance().GetCamera().GetIsMove())
+	{
+		// 足音ループ
+		if (!CheckSoundMem(footSeId_))
+		{
+			PlaySoundMem(footSeId_, DX_PLAYTYPE_BACK);
+		}
+	}
+	else if(CheckSoundMem(footSeId_))
+	{
+		if (!CheckSoundMem(footSeId_))
+		{
+			StopSoundMem(footSeId_);
+		}
+	}
+
 	auto cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
 	auto cameraAngle = SceneManager::GetInstance().GetCamera().GetAngle();
 	bool isCollision = Collision();
@@ -91,8 +109,24 @@ void GameScene::Update(void)
 			enemy_->SetTargetPos(circlePos_);
 			isCollision_ = true;
 			SceneManager::GetInstance().GetCamera().SetFarClip(1800.0f);
-			PlaySoundMem(seId_, DX_PLAYTYPE_BACK);
+			//PlaySoundMem(seId_, DX_PLAYTYPE_BACK);
 			isMove = false;
+
+			// --- 距離に応じた音量調整 ---
+			VECTOR playerPos = cameraPos; // ← プレイヤーの位置を取得（クラスに応じて変更）
+			VECTOR soundPos = circlePos_;
+			float distance = VSize(VSub(soundPos, playerPos));
+
+			const float MAX_DISTANCE = 1000.0f; // 聞こえる最大距離
+			const int MAX_VOLUME = 255;
+			const int MIN_VOLUME = 0;
+
+			float t = 1.0f - (distance / MAX_DISTANCE);
+			t = std::clamp(t, 0.0f, 1.0f);
+			int volume = static_cast<int>(t * MAX_VOLUME);
+
+			ChangeVolumeSoundMem(volume, seId_);
+			PlaySoundMem(seId_, DX_PLAYTYPE_BACK);
 		}
 	}
 	else
@@ -220,7 +254,6 @@ void GameScene::Draw(void)
 
 	auto ePos = enemy_->GetPos();
 	VECTOR diff = VSub(ePos, cameraPos);
-	auto a = VSize(diff);
 
 	//if (CheckCameraViewClip(ePos)) return;
 	//SceneManager::GetInstance().GetCamera().SetFarClip(moveNum);
@@ -258,6 +291,12 @@ void GameScene::Release(void)
 	enemy_->Release();
 	delete enemy_;
 	enemy_ = nullptr;
+
+	StopSoundMem(seId_);
+	DeleteSoundMem(seId_);
+
+	StopSoundMem(footSeId_);
+	DeleteSoundMem(footSeId_);
 }
 
 bool GameScene::CollisionCamera(VECTOR pos)

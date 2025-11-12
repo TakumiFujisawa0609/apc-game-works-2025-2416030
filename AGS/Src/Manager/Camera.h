@@ -69,6 +69,9 @@ public:
 	void SetPos(VECTOR pos) { pos_ = pos; }
 	void SetCollision(bool is) { isCollision_ = is; }
 
+	bool GetIsMove() { return isMove_; }
+	void SetIsMove(bool isMove) { isMove_ = isMove; }
+
 	VECTOR Move();                     // 入力から次座標を計算して返す
 	void ApplyMove(const VECTOR& newPos); // 確定的に pos_ に反映
 private:
@@ -86,7 +89,7 @@ private:
 
 	float farClip_ = 0;
 
-	int footSeId_;
+	bool isMove_;
 
 	// カメラモード別の制御処理
 	void SetBeforeDrawFixedPoint(void);

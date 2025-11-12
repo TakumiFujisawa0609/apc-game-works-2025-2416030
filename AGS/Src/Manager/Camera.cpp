@@ -23,7 +23,7 @@ void Camera::Init(void)
 	farClip_ = CAMERA_FAR;
 	farClip_ = 100.0f;
 
-	footSeId_ = LoadSoundMem((Application::PATH_SE + "FootStep.mp3").c_str());
+	isMove_ = false;
 }
 
 // 更新
@@ -72,6 +72,7 @@ void Camera::DrawDebug(void)
 // 解放
 void Camera::Release(void)
 {
+	
 }
 
 void Camera::ChangeMode(MODE mode)
@@ -137,15 +138,11 @@ VECTOR Camera::Move()
 	// 入力がなければ停止
 	if (VSize(moveDir) <= 0.0f)
 	{
-		if (CheckSoundMem(footSeId_)) StopSoundMem(footSeId_);
+		isMove_ = false;
 		return pos_;
 	}
 
-	// 足音ループ
-	if (!CheckSoundMem(footSeId_))
-	{
-		PlaySoundMem(footSeId_, DX_PLAYTYPE_LOOP);
-	}
+	isMove_ = true;
 
 	// 正規化
 	moveDir = VNorm(moveDir);

@@ -1,6 +1,2 @@
-﻿  GameClear.cpp
-C:\Project\AGS_Winter\AGS\Src\Scene\GameClear.cpp(37,88): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
-  GameOver.cpp
-C:\Project\AGS_Winter\AGS\Src\Scene\GameOver.cpp(38,88): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
-  コードを生成中...
+﻿  GameScene.cpp
   AGS.vcxproj -> C:\Project\AGS_Winter\AGS\x64\Debug\AGS.exe
