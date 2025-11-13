@@ -98,11 +98,11 @@ void GameScene::Update(void)
 
 	if (isCollision)
 	{
-		auto& sceneMana = SceneManager::GetInstance();
-
 		//int a = 0;
 		if (!isCollision_)
 		{
+			auto& sceneMana = SceneManager::GetInstance();
+
 			// 接地
 			sceneMana.SetPointLightPos(circlePos_);
 			sceneMana.IsPointLightPow();
@@ -205,7 +205,7 @@ void GameScene::Update(void)
 	// 発射キー
 	
 	
-	Collision();
+	//Collision();
 
 	if (isMove)
 	{
@@ -348,27 +348,19 @@ bool GameScene::CollisionCamera(VECTOR pos)
 
 bool GameScene::Collision(void)
 {
+	bool isEnemyHit = EnemyCollision();
+	if (isEnemyHit) return false;
+
+	StageCollision();
 	// ステージモデルID
 	int stageModelId = stage_->GetModelId();
-	// 弾を取得する
-	//std::vector<ShotBase*> shots = cannon_->GetShots();
-	//for (ShotBase* shot : shots)
-	{
-		//if (!shot->IsCollisionState())
-		//{
-		//	// 爆発中や処理終了後は、以降の処理は実行しない
-		//	continue;
-		//}
-		// ステージモデルとの衝突判定
-		
-	}
+
 	auto info = MV1CollCheck_Sphere(
 		stageModelId, -1, circlePos_, CIRCLE_RADIUS);
 	auto cPos = SceneManager::GetInstance().GetCamera().GetPos();
 	cPos.y -= 300.0f;
 	if (AsoUtility::IsHitSpheres(cPos, 20.0f, enemy_->GetPos(), 20.0f))
 	{
-		int a = 0;
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
 
@@ -379,55 +371,31 @@ bool GameScene::Collision(void)
 		// 当たり判定結果ポリゴン配列の後始末をする
 		MV1CollResultPolyDimTerminate(info);
 		return true;
-
-		//	// --- 壁・床などの全ての衝突ポリゴンを見る ---
-		//	for (int i = 0; i < info.HitNum; i++)
-		//	{
-		//		auto& hit = info.Dim[i];
-		//		// ポリゴンの中心を計算
-		//		VECTOR hitPos = {
-		//			(hit.Position[0].x + hit.Position[1].x + hit.Position[2].x) / 3.0f,
-		//			(hit.Position[0].y + hit.Position[1].y + hit.Position[2].y) / 3.0f,
-		//			(hit.Position[0].z + hit.Position[1].z + hit.Position[2].z) / 3.0f
-		//		};
-		//		VECTOR hitNormal = hit.Normal;
-
-		//		// ----------- 壁との衝突（横方向のポリゴン） -----------
-		//		// 床 / 天井 ではない場合 = 横の壁
-		//		if (fabs(hitNormal.y) < 0.5f) // 横壁の法線はY成分が小さい
-		//		{
-		//			// めり込み防止：法線方向に押し戻す
-		//			float pushBack = 2.0f; // 押し戻し係数（大きければ強く押し返す）
-		//			circlePos_ = VAdd(circlePos_, VScale(hitNormal, pushBack));
-
-		//			// 壁に当たったときの減速
-		//			powdddd /= 1.5f;
-
-		//			// ここで跳ね返しSEとかつけてもOK
-		//		}
-		//	}
-
-		//	// バウンド
-		//if (circlePos_.y - CIRCLE_RADIUS < 0.0f)
-		//{
-		//	auto& sceneMana = SceneManager::GetInstance();
-
-		//	circlePos_.y = 0.0f + CIRCLE_RADIUS;
-
-		//	powdddd /= 2.0f;
-		//	pow = powdddd;
-		//	sceneMana.SetPointLightPos(circlePos_);
-
-		//	if (!isCollision_)
-		//	{
-		//		sceneMana.IsPointLightPow();
-		//		isCollision_ = true;
-		//	}
-		//	
-		//}
-		//}
-		// 当たり判定結果ポリゴン配列の後始末をする
-		//MV1CollResultPolyDimTerminate(info);
 	}
+	return false;
+}
+
+bool GameScene::StageCollision(void)
+{
+	// ステージモデルID
+	int stageModelId = stage_->GetModelId();
+
+	auto info = MV1CollCheck_Sphere(
+		stageModelId, -1, circlePos_, CIRCLE_RADIUS);
+
+	if (info.HitNum > 0)
+	{
+		//shot->Blast();
+		int a = 0;
+		// 当たり判定結果ポリゴン配列の後始末をする
+		MV1CollResultPolyDimTerminate(info);
+		return true;
+	}
+
+	return false;
+}
+
+bool GameScene::EnemyCollision(void)
+{
 	return false;
 }

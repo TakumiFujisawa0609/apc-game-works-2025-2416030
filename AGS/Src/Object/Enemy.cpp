@@ -6,6 +6,9 @@
 
 
 Enemy::Enemy(void)
+	:
+	animationController_(nullptr),
+	modelId_(-1)
 {
 }
 

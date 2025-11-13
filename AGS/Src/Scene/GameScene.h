@@ -66,7 +66,13 @@ private:
 
 	int rePress, newPress;
 
+	// 当たり判定
 	bool Collision(void);
+
+	// 自身とステージの当たり判定
+	bool StageCollision(void);
+	// 自身と敵の当たり判定
+	bool EnemyCollision(void);
 
 	// 追加するメンバ変数（クラス内）
 	VECTOR vel = VGet(0.0f, 0.0f, 0.0f); // 初期速度
