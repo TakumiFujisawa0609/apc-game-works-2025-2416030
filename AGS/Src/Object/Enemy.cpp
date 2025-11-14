@@ -2,13 +2,20 @@
 #include "../Application.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/Camera.h"
+#include "../Utility/AsoUtility.h"
 #include "Common/AnimationController.h"
 
 
 Enemy::Enemy(void)
 	:
 	animationController_(nullptr),
-	modelId_(-1)
+	modelId_(-1),
+	angles_(AsoUtility::VECTOR_ZERO),
+	moveDir_(AsoUtility::VECTOR_ZERO),
+	pos_(AsoUtility::VECTOR_ZERO),
+	scales_(AsoUtility::VECTOR_ONE),
+	targetPos_(AsoUtility::VECTOR_ZERO),
+	isMoveSpot_(false)
 {
 }
 
@@ -26,9 +33,9 @@ void Enemy::Init(void)
 	animationController_ = new AnimationController(modelId_);
 	for (int i = 0; i < static_cast<int>(ANIM_TYPE::MAX); i++)
 	{
-		animationController_->AddInFbx(i, 30.0f, i);
+		animationController_->AddInFbx(i, 15.0f, i);
 	}
-
+	animationController_->Play(static_cast<int>(ANIM_TYPE::WALK));
 	MV1SetPosition(modelId_, { 3060.0f, 0.0f, 5000.0f });
 	MV1SetRotationXYZ(modelId_, { 0.0f, 0.0f, 0.0f });
 }
@@ -36,6 +43,8 @@ void Enemy::Init(void)
 void Enemy::Update(void)
 {
 	Move();
+	// アニメーション再生
+	animationController_->Update();
 }
 
 void Enemy::Draw(void)
@@ -50,21 +59,20 @@ void Enemy::Release(void)
 {
 	// ロードされた３Ｄモデルをメモリから解放
 	MV1DeleteModel(modelId_);
+
+	animationController_->Release();
+	delete animationController_;
 }
 
 VECTOR Enemy::GetHeadPos(void)
 {
-	auto headFrame = MV1SearchFrame(modelId_, "Head");
-	auto headPos = MV1GetFramePosition(modelId_, headFrame);
-	return headPos;
+	return MV1GetFramePosition(modelId_, MV1SearchFrame(modelId_, "Head"));
 }
 
 void Enemy::Move()
 {
 	// デルタタイム
 	float dt = SceneManager::GetInstance().GetDeltaTime();
-	const float stopDistance = 2.0f;
-	const float moveSpeed = 5.0f;
 
 	VECTOR diff;
 
@@ -78,9 +86,9 @@ void Enemy::Move()
 		diff.y = 0.0f;
 		float dist = VSize(diff);
 
-		if (dist > stopDistance)
+		if (dist > STOP_DISTANCE)
 		{
-			VECTOR moveVec = VScale(VNorm(diff), moveSpeed * dt);
+			VECTOR moveVec = VScale(VNorm(diff), SPEED * dt);
 			pos_ = VAdd(pos_, moveVec);
 		}
 		else

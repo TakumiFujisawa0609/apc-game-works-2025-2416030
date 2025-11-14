@@ -3,6 +3,8 @@
 #include "Player.h"
 
 Player::Player(void)
+	:
+	camera_(nullptr)
 {
 }
 

@@ -34,7 +34,7 @@ public:
 	void Draw(void) override;
 	void Release(void) override;
 
-	bool CollisionCamera(VECTOR pos = {0,0,0});
+	bool CollisionCamera(void);
 
 private:
 	// ステージインスタンス
@@ -67,12 +67,15 @@ private:
 	int rePress, newPress;
 
 	// 当たり判定
-	bool Collision(void);
+	void Collision(void);
 
 	// 自身とステージの当たり判定
 	bool StageCollision(void);
 	// 自身と敵の当たり判定
 	bool EnemyCollision(void);
+
+	void CircleCollisionSet(void);
+	void CircleMove(void);
 
 	// 追加するメンバ変数（クラス内）
 	VECTOR vel = VGet(0.0f, 0.0f, 0.0f); // 初期速度

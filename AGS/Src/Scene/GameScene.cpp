@@ -1,5 +1,4 @@
-﻿
-#include "../Utility/AsoUtility.h"
+﻿#include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Stage.h"
@@ -88,76 +87,17 @@ void GameScene::Update(void)
 		}
 	}
 
-	auto cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
-	auto cameraAngle = SceneManager::GetInstance().GetCamera().GetAngle();
-	bool isCollision = Collision();
-	bool isCameraCollision = CollisionCamera();
-
 	stage_->Update();
 	enemy_->Update();
-
-	if (isCollision)
-	{
-		//int a = 0;
-		if (!isCollision_)
-		{
-			auto& sceneMana = SceneManager::GetInstance();
-
-			// 接地
-			sceneMana.SetPointLightPos(circlePos_);
-			sceneMana.IsPointLightPow();
-			enemy_->SetTargetPos(circlePos_);
-			isCollision_ = true;
-			SceneManager::GetInstance().GetCamera().SetFarClip(1800.0f);
-			//PlaySoundMem(seId_, DX_PLAYTYPE_BACK);
-			isMove = false;
-
-			// --- 距離に応じた音量調整 ---
-			VECTOR playerPos = cameraPos; // ← プレイヤーの位置を取得（クラスに応じて変更）
-			VECTOR soundPos = circlePos_;
-			float distance = VSize(VSub(soundPos, playerPos));
-
-			const float MAX_DISTANCE = 1000.0f; // 聞こえる最大距離
-			const int MAX_VOLUME = 255;
-			const int MIN_VOLUME = 0;
-
-			float t = 1.0f - (distance / MAX_DISTANCE);
-			t = std::clamp(t, 0.0f, 1.0f);
-			int volume = static_cast<int>(t * MAX_VOLUME);
-
-			ChangeVolumeSoundMem(volume, seId_);
-			PlaySoundMem(seId_, DX_PLAYTYPE_BACK);
-		}
-	}
-	else
-	{
-		// 動く
-
-		//	//// 発射距離チェック
-		//	//VECTOR diff = VSub(circlePos_, startPos_);
-		//	//float traveled = VSize(diff);
-		//	//if (traveled >= maxDistance)
-		//	//{
-		//	//	isShooting = false;
-		//	//	powdddd = 0.0f;  // 念のため速度リセット
-		//	//}
-		//}
-		// 移動
-		circlePos_ = VAdd(circlePos_, VScale(moveDir_, powdddd * SceneManager::GetInstance().GetDeltaTime()));
-
-		circlePos_.x += movePow.x * SceneManager::GetInstance().GetDeltaTime();
-		pow -= GRAVITY * SceneManager::GetInstance().GetDeltaTime();
-
-		circlePos_.y += pow * SceneManager::GetInstance().GetDeltaTime();
-
-		isMove = true;
-	}
 	
 
 	// 発射キー
 	if ((CheckHitKey(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		&& !isMove)
 	{
+		auto cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
+		auto cameraAngle = SceneManager::GetInstance().GetCamera().GetAngle();
+
 		isCollision_ = false;
 		isShooting = true;
 		startPos_ = cameraPos;
@@ -180,32 +120,10 @@ void GameScene::Update(void)
 		powdddd = 20.0f;  // 移動速度
 		
 	}
-	
-	//// バウンド
-	//if (circlePos_.y - CIRCLE_RADIUS < 0.0f)
-	//{
-	//	auto& sceneMana = SceneManager::GetInstance();
 
-	//	circlePos_.y = 0.0f + CIRCLE_RADIUS;
-
-	//	powdddd /= 2.0f;
-	//	pow = powdddd;
-	//	sceneMana.SetPointLightPos(circlePos_);
-
-	//	if (!isBound_)
-	//	{
-	//		sceneMana.IsPointLightPow();
-	//		isBound_ = true;
-	//	}
-	//	
-	//}
 	lightPow_ -= 0.001f * SceneManager::GetInstance().GetDeltaTime();
-	//SceneManager::GetInstance().SetPointLightPos(lightPow_);
 
 	// 発射キー
-	
-	
-	//Collision();
 
 	if (isMove)
 	{
@@ -217,6 +135,9 @@ void GameScene::Update(void)
 		// FarClipを距離に応じて設定（最小値を確保）
 		camera.SetFarClip(dist);
 	}
+
+	Collision();
+	CollisionCamera();
 }
 
 void GameScene::Draw(void)
@@ -233,7 +154,7 @@ void GameScene::Draw(void)
 		SetUseLighting(TRUE);
 	}
 	auto cameraPos = SceneManager::GetInstance().GetCamera().GetPos();
-#ifdef DEBUG
+#ifdef _DEBUG
 	DrawFormatString(
 		0, 40, 0xFFFFFF, "球座標：(%.2f, %.2f, %.2f)",
 		circlePos_.x, circlePos_.y, circlePos_.z);
@@ -299,7 +220,7 @@ void GameScene::Release(void)
 	DeleteSoundMem(footSeId_);
 }
 
-bool GameScene::CollisionCamera(VECTOR pos)
+bool GameScene::CollisionCamera(void)
 {
 	auto& camera = SceneManager::GetInstance().GetCamera();
 
@@ -330,49 +251,26 @@ bool GameScene::CollisionCamera(VECTOR pos)
 		// 衝突あり → pos_ は更新されない
 	}
 
-	/*auto& camera = SceneManager::GetInstance().GetCamera();
-
-	int stageModelId = stage_->GetModelId();
-	
-	auto info = MV1CollCheck_Sphere(
-		stageModelId, -1, camera.GetPos(), camera.CAMERA_RADIUS);
-	if (info.HitNum > 0)
-	{
-		camera.SetCollision(true);
-		return true;
-	}
-	camera.SetCollision(false);
-	return false;*/
 	return false;
 }
 
-bool GameScene::Collision(void)
+void GameScene::Collision(void)
 {
 	bool isEnemyHit = EnemyCollision();
-	if (isEnemyHit) return false;
+	if (isEnemyHit) return;
 
-	StageCollision();
-	// ステージモデルID
-	int stageModelId = stage_->GetModelId();
-
-	auto info = MV1CollCheck_Sphere(
-		stageModelId, -1, circlePos_, CIRCLE_RADIUS);
-	auto cPos = SceneManager::GetInstance().GetCamera().GetPos();
-	cPos.y -= 300.0f;
-	if (AsoUtility::IsHitSpheres(cPos, 20.0f, enemy_->GetPos(), 20.0f))
+	bool isStageCollision = StageCollision();
+	if (isStageCollision)
 	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		if (!isCollision_)
+		{
+			CircleCollisionSet();
+		}
 	}
-
-	if (info.HitNum > 0)
+	else
 	{
-		//shot->Blast();
-		int a = 0;
-		// 当たり判定結果ポリゴン配列の後始末をする
-		MV1CollResultPolyDimTerminate(info);
-		return true;
+		CircleMove();
 	}
-	return false;
 }
 
 bool GameScene::StageCollision(void)
@@ -397,5 +295,55 @@ bool GameScene::StageCollision(void)
 
 bool GameScene::EnemyCollision(void)
 {
+	auto cPos = SceneManager::GetInstance().GetCamera().GetPos();
+	cPos.y -= 300.0f;
+
+	if (AsoUtility::IsHitSpheres(cPos, 20.0f, enemy_->GetPos(), 20.0f))
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		return true;
+	}
+
 	return false;
+}
+
+void GameScene::CircleCollisionSet(void)
+{
+	auto& sceneMana = SceneManager::GetInstance();
+
+	// 接地
+	sceneMana.SetPointLightPos(circlePos_);
+	sceneMana.IsPointLightPow();
+	enemy_->SetTargetPos(circlePos_);
+	isCollision_ = true;
+	SceneManager::GetInstance().GetCamera().SetFarClip(1800.0f);
+	isMove = false;
+
+	// --- 距離に応じた音量調整 ---
+	VECTOR playerPos = SceneManager::GetInstance().GetCamera().GetPos(); // ← プレイヤーの位置を取得（クラスに応じて変更）
+	VECTOR soundPos = circlePos_;
+	float distance = VSize(VSub(soundPos, playerPos));
+
+	const float MAX_DISTANCE = 1000.0f; // 聞こえる最大距離
+	const int MAX_VOLUME = 255;
+	const int MIN_VOLUME = 0;
+
+	float t = 1.0f - (distance / MAX_DISTANCE);
+	t = std::clamp(t, 0.0f, 1.0f);
+	int volume = static_cast<int>(t * MAX_VOLUME);
+
+	ChangeVolumeSoundMem(volume, seId_);
+	PlaySoundMem(seId_, DX_PLAYTYPE_BACK);
+}
+
+void GameScene::CircleMove(void)
+{
+	circlePos_ = VAdd(circlePos_, VScale(moveDir_, powdddd * SceneManager::GetInstance().GetDeltaTime()));
+
+	circlePos_.x += movePow.x * SceneManager::GetInstance().GetDeltaTime();
+	pow -= GRAVITY * SceneManager::GetInstance().GetDeltaTime();
+
+	circlePos_.y += pow * SceneManager::GetInstance().GetDeltaTime();
+
+	isMove = true;
 }

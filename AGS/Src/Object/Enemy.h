@@ -39,12 +39,6 @@ public:
 		MAX,
 	};
 
-	static constexpr VECTOR SPOT1_POS = { -60.0f, 300.0f, 4775.0f };
-	static constexpr VECTOR SPOT2_POS = { 0.0f, 300.0f, 0.0f };
-	static constexpr VECTOR SPOT3_POS = { 3060.0f, 300.0f, 4970.0f };
-
-	static constexpr float SPEED = 2.0f;
-
 	// コンストラクタ
 	Enemy(void);
 	// デストラクタ
@@ -59,6 +53,15 @@ public:
 	VECTOR GetPos(void) { return pos_; }
 	VECTOR GetHeadPos(void);
 private:
+
+	static constexpr VECTOR SPOT1_POS = { -60.0f, 300.0f, 4775.0f };
+	static constexpr VECTOR SPOT2_POS = { 0.0f, 300.0f, 0.0f };
+	static constexpr VECTOR SPOT3_POS = { 3060.0f, 300.0f, 4970.0f };
+
+	static constexpr float SPEED = 5.0f;
+
+	static constexpr float STOP_DISTANCE = 2.0f;
+
 	// アニメーションコントローラ
 	AnimationController* animationController_;
 
@@ -77,13 +80,9 @@ private:
 	// 移動方向
 	VECTOR moveDir_;
 
-	// 移動速度
-	float speed_;
-
 	VECTOR targetPos_;
 
 	bool isMoveSpot_;
-	float arriveThreshold_ = 10.0f; // 到着判定距離
 
 	void Move();
 };
