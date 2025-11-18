@@ -23,6 +23,9 @@ public:
 	// 重力
 	static constexpr float GRAVITY = 9.81f;
 
+	// 配列サイズ
+	static constexpr int LIGHT_LENGTH = 2;
+
 	
 	// インスタンスの生成
 	static void CreateInstance(void);
@@ -41,6 +44,7 @@ public:
 
 	// 更新
 	void Update(void);
+	void UpdateLight(void);
 
 	// 描画
 	void Draw(void);
@@ -59,6 +63,10 @@ public:
 
 	Camera& GetCamera(void) const{ return *camera_; }
 
+	void CreateLight(void);
+	void DeleteLight(void);
+
+	void CreateLight();
 	
 
 	void SetPointLightPos(VECTOR pos)
@@ -70,6 +78,15 @@ public:
 	VECTOR GetLightPos() { return pointLightPos_; }
 
 private:
+
+	struct LightInfo
+	{
+		bool isActive;   // ライトを使うかどうか
+		int handle;      // ライトハンドル
+	};
+
+	// 3つ分用意
+	LightInfo lights_[LIGHT_LENGTH];
 
 	// 静的インスタンス
 	static SceneManager* instance_;

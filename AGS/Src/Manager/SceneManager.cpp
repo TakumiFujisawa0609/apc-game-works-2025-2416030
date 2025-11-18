@@ -144,24 +144,30 @@ void SceneManager::Update(void)
 		// 各シーンの更新処理
 		scene_->Update();
 	}
+	UpdateLight();
+}
 
-
-	/*if ((CheckHitKey(KEY_INPUT_SPACE)) == 1)
-	{
-		lightPow_ = 0.0001f;
-	}*/
+void SceneManager::UpdateLight(void)
+{
 	if (lightPow_ < 0.01f)
 	{
+		// 徐々に暗く
 		lightPow_ += 0.00004f * GetDeltaTime();
 	}
 	else
 	{
+		// 真っ暗
 		lightPow_ = 0.08f;
 		camera_->SetFarClip(100.0f);
 	}
 	SetLightRangeAtten(400.0f, 0.000001f, lightPow_, 0.0000001f);
-	//SetLightRangeAtten(0.0f, 1.0f, 0.0f, 0.0f);
 
+	for (int i = 0; i < LIGHT_LENGTH; i++)
+	{
+		if (lights_[i].isActive == false) continue;
+
+		SetLightEnableHandle(lights_[i].handle, TRUE);
+	}
 }
 
 void SceneManager::Draw(void)
@@ -242,6 +248,7 @@ void SceneManager::Destroy(void)
 	// ライトハンドルの削除
 	DeleteLightHandle(pointLight1_);
 	DeleteLightHandle(pointLight2_);
+	DeleteLight();
 
 }
 
@@ -272,6 +279,35 @@ float SceneManager::GetDeltaTime(void) const
 	return DeltaTime * 60.0f;
 }
 
+void SceneManager::CreateLight(void)
+{
+	for (int i = 0; i < LIGHT_LENGTH; i++)
+	{
+		lights_[i].handle = CreatePointLightHandle({ 0,0,0 }, 0.0f, 0.0f, 0.0f, 0.0f);
+		lights_[i].isActive = true;
+		SetLightEnableHandle(lights_[i].handle, FALSE);
+	}
+}
+
+void SceneManager::DeleteLight(void)
+{
+	for (int i = 0; i < LIGHT_LENGTH; i++)
+	{
+		lights_[i].handle = -1;
+		lights_[i].isActive = false;
+	}
+}
+
+void SceneManager::CreateLight()
+{
+	for (int i = 0; i < LIGHT_LENGTH; i++)
+	{
+		if (lights_[i].isActive == true) continue;
+
+		SetLightEnableHandle(lights_[i].handle, TRUE);
+	}
+}
+
 SceneManager::SceneManager(void)
 {
 
@@ -286,6 +322,7 @@ SceneManager::SceneManager(void)
 	// デルタタイム
 	deltaTime_ = 1.0f / 60.0f;
 
+	CreateLight();
 }
 
 void SceneManager::ResetDeltaTime(void)
