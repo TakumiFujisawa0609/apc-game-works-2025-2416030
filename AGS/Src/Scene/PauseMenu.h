@@ -14,6 +14,7 @@ public:
     }
 
     void Toggle() { isActive_ = !isActive_; }
+    void GameExitConfirm() { state_ = MENU_STATE::CONFIRM; isConfirm_ = true; }
     bool IsActive() const { return isActive_; }
 
     // 入力処理
@@ -26,11 +27,16 @@ public:
     int GetSelectedIndex() const { return selectedIndex_; }
 
 private:
+    enum class MENU_STATE {
+        MAIN,       // pause 通常メニュー
+        CONFIRM     // 終了確認
+    };
+
+    MENU_STATE state_ = MENU_STATE::MAIN;
+    bool isConfirm_ = false;
+
     bool isActive_;
     int selectedIndex_;
     std::vector<std::string> items_;
     bool isT;
-
-    // 入力の押しっぱなし防止
-    void WaitKeyInput();
 };

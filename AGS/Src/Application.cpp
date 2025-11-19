@@ -42,6 +42,7 @@ void Application::Init(void)
 	SetWindowText("2416030_野本アレン");
 
 	// ウィンドウサイズ
+	GetWindowSize(&w, &h);
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
 	ChangeWindowMode(true);
 

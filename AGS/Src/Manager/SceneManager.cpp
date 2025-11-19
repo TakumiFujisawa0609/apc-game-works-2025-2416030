@@ -4,6 +4,7 @@
 #include "../Scene/GameScene.h"
 #include "../Scene/GameOver.h"
 #include "../Scene/GameClear.h"
+#include "../Scene/PauseMenu.h"
 #include "SceneManager.h"
 #include "Camera.h"
 
@@ -55,6 +56,10 @@ void SceneManager::Init(void)
 	DoChangeScene(SCENE_ID::TITLE);
 
 	lightPow_ = 0.001f;
+
+	pauseMenu_ = new PauseMenu();
+
+	rePress = newPress = 0;
 }
 
 void SceneManager::Init3D(void)
@@ -141,10 +146,25 @@ void SceneManager::Update(void)
 	}
 	else
 	{
+		rePress = newPress;
+		newPress = CheckHitKey(KEY_INPUT_ESCAPE);
+
+		// Escapeキーでポーズ切り替え
+		if ((rePress == 0 && newPress == 1))
+		{
+			pauseMenu_->Toggle();
+		}
+
+		if (pauseMenu_->IsActive())
+		{
+			pauseMenu_->Update();
+			return; // ポーズ中はゲーム更新停止
+		}
+
 		// 各シーンの更新処理
 		scene_->Update();
+		UpdateLight();
 	}
-	UpdateLight();
 }
 
 void SceneManager::UpdateLight(void)
@@ -160,15 +180,52 @@ void SceneManager::UpdateLight(void)
 		lightPow_ = 0.08f;
 		camera_->SetFarClip(100.0f);
 	}
-	SetLightRangeAtten(400.0f, 0.000001f, lightPow_, 0.0000001f);
 
-	for (int i = 0; i < LIGHT_LENGTH; i++)
+	float pow = lightPow_;
+
+	//------------------------------------------
+	// ライト 0 : メインライト
+	//------------------------------------------
 	{
-		if (lights_[i].isActive == false) continue;
+		LightInfo& L = lights_[0];
 
-		SetLightEnableHandle(lights_[i].handle, TRUE);
+		SetLightPositionHandle(L.handle, pointLightPos_);
+
+		// GetColorF(r,g,b) でOK
+		auto col = GetColorF(pow, pow, pow, 1.0f);
+
+		SetLightDifColorHandle(L.handle, col);
+		SetLightSpcColorHandle(L.handle, col);
+
+		if (!L.isActive)
+		{
+			SetLightEnableHandle(L.handle, TRUE);
+			L.isActive = true;
+		}
+	}
+
+	//------------------------------------------
+	// ライト 1 : 補助ライト
+	//------------------------------------------
+	{
+		LightInfo& L = lights_[1];
+
+		SetLightPositionHandle(L.handle, pointLightPos_);
+
+		float pow2 = pow * 0.6f;
+		auto col = GetColorF(pow2, pow2, pow2, 1.0f);
+
+		SetLightDifColorHandle(L.handle, col);
+		SetLightSpcColorHandle(L.handle, col);
+
+		if (!L.isActive)
+		{
+			SetLightEnableHandle(L.handle, TRUE);
+			L.isActive = true;
+		}
 	}
 }
+
 
 void SceneManager::Draw(void)
 {
@@ -206,6 +263,7 @@ void SceneManager::Draw(void)
 	if (CheckHitKey(KEY_INPUT_F)) { pointLightPos_.x -= 3.0f; }*/
 	
 	SetLightPosition(pointLightPos_);
+	//SetLightPositionHandle(lights_[0].handle, { pointLightPos_.x,pointLightPos_.y + 200.0f,pointLightPos_.z });
 	
 	SetLightRangeAtten(400.0f, 0.000001f, lightPow_, 0.0000001f);
 	// 標準ライトのディフューズカラーを青色にする
@@ -246,10 +304,7 @@ void SceneManager::Destroy(void)
 	delete instance_;
 
 	// ライトハンドルの削除
-	DeleteLightHandle(pointLight1_);
-	DeleteLightHandle(pointLight2_);
 	DeleteLight();
-
 }
 
 void SceneManager::ChangeScene(SCENE_ID nextId)
@@ -283,11 +338,24 @@ void SceneManager::CreateLight(void)
 {
 	for (int i = 0; i < LIGHT_LENGTH; i++)
 	{
-		lights_[i].handle = CreatePointLightHandle({ 0,0,0 }, 0.0f, 0.0f, 0.0f, 0.0f);
-		lights_[i].isActive = true;
+		lights_[i].isActive = false;
+
+		VECTOR pos = VGet(0.0f, 0.0f, 0.0f);
+
+		// 元の標準ポイントライトと同じパラメータ
+		lights_[i].handle = CreatePointLightHandle(
+			pos,
+			400.0f,            // Range
+			0.000001f,         // Atten0
+			0.01f,             // Atten1
+			0.0000001f         // Atten2
+		);
+
+		// 最初は無効化
 		SetLightEnableHandle(lights_[i].handle, FALSE);
 	}
 }
+
 
 void SceneManager::DeleteLight(void)
 {
@@ -298,15 +366,15 @@ void SceneManager::DeleteLight(void)
 	}
 }
 
-void SceneManager::CreateLight()
+void SceneManager::CreateSetLight()
 {
-	for (int i = 0; i < LIGHT_LENGTH; i++)
-	{
-		if (lights_[i].isActive == true) continue;
+	// 標準ライトを使わない
+	SetLightEnable(FALSE);
 
-		SetLightEnableHandle(lights_[i].handle, TRUE);
-	}
+	// Ambient（環境光）だけ残す
+	//SetLightAmbientHandle(0, GetColorF(0.2f, 0.2f, 0.2f));
 }
+
 
 SceneManager::SceneManager(void)
 {
@@ -322,7 +390,7 @@ SceneManager::SceneManager(void)
 	// デルタタイム
 	deltaTime_ = 1.0f / 60.0f;
 
-	CreateLight();
+	//CreateLight();
 }
 
 void SceneManager::ResetDeltaTime(void)

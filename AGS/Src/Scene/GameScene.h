@@ -64,8 +64,6 @@ private:
 	float maxDistance = 1000.0f;  // これ以上飛んだら停止
 	bool isMove;
 
-	int rePress, newPress;
-
 	// 当たり判定
 	void Collision(void);
 

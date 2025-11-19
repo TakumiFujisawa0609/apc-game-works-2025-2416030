@@ -1,8 +1,6 @@
 #include "SceneBase.h"
 
 SceneBase::SceneBase(void)
-	:
-	pauseMenu_(nullptr)
 {
 }
 

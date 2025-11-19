@@ -30,13 +30,14 @@ void GameScene::Init(void)
 
 	seId_ = LoadSoundMem((Application::PATH_SE + "Aura.mp3").c_str());
 
-	pauseMenu_ = new PauseMenu();
+	//pauseMenu_ = new PauseMenu();
 
 	isMove = false;
 
-	rePress = newPress = 0;
+	//rePress = newPress = 0;
 
 	footSeId_ = LoadSoundMem((Application::PATH_SE + "FootStep.mp3").c_str());
+	ChangeVolumeSoundMem(200.0f, footSeId_);
 }
 
 void GameScene::Update(void)
@@ -47,29 +48,29 @@ void GameScene::Update(void)
 	InputManager::JOYPAD_IN_STATE padState =
 		ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
 
-	rePress = newPress;
-	newPress = ins.IsNew(KEY_INPUT_P);
+	//rePress = newPress;
+	//newPress = ins.IsNew(KEY_INPUT_ESCAPE);
 
 	if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP))
 	{
-		printfDx("Pad TOP Trigger\n");
+		//printfDx("Pad TOP Trigger\n");
 	}
 	if (ins.IsTrgDown(KEY_INPUT_UP))
 	{
-		printfDx("Keyboard UP Trigger\n");
+		//printfDx("Keyboard UP Trigger\n");
 	}
 
-	// Pキーでポーズ切り替え
-	if ((rePress == 0 && newPress == 1))
-	{
-		pauseMenu_->Toggle();
-	}
+	//// Escapeキーでポーズ切り替え
+	//if ((rePress == 0 && newPress == 1))
+	//{
+	//	pauseMenu_->Toggle();
+	//}
 
-	if (pauseMenu_->IsActive())
-	{
-		pauseMenu_->Update();
-		return; // ポーズ中はゲーム更新停止
-	}
+	//if (pauseMenu_->IsActive())
+	//{
+	//	pauseMenu_->Update();
+	//	return; // ポーズ中はゲーム更新停止
+	//}
 
 	if (SceneManager::GetInstance().GetCamera().GetIsMove())
 	{
@@ -164,41 +165,13 @@ void GameScene::Draw(void)
 		cameraPos.x, cameraPos.y, cameraPos.z);
 #endif // DEBUG
 
-	
-
-	//auto iu = ConvWorldPosToScreenPos(enemy_->GetPos());
-
-	/*DrawFormatString(
-		0, 120, 0xFFFFFF, "敵座標：(%.2f, %.2f, %.2f)",
-		iu.x, iu.y, iu.z);
-	DrawCircle(iu.x, iu.y - 100.0f, 20.0f, GetColor(255, 255, 255), true);*/
-
 	auto ePos = enemy_->GetPos();
 	VECTOR diff = VSub(ePos, cameraPos);
 
-	//if (CheckCameraViewClip(ePos)) return;
-	//SceneManager::GetInstance().GetCamera().SetFarClip(moveNum);
 	enemy_->Draw();
 	SetUseZBuffer3D(TRUE);
-	
 
-	//if (a < 1000.0f) {
-	//	// 近いときの処理
-	//	auto sd = enemy_->GetHeadPos();
-	//	float baseScale = 1.0f;          // 元のサイズ
-	//	float maxDistance = 500.0f;      // スケール変化させたい最大距離
-
-	//	float t = 1.0f - (a / maxDistance);
-	//	t = std::clamp(t, 0.2f, 1.5f);   // 下限0.2倍〜上限1.5倍など制限
-
-	//	float scale = baseScale * t;
-
-	//	auto iu = ConvWorldPosToScreenPos(sd);
-	//	DrawFormatString(0, 120, 0xFFFFFF, "敵座標：(%.2f, %.2f, %.2f)", iu.x, iu.y, iu.z);
-	//	DrawCircle(iu.x, iu.y, 20.0f, GetColor(255, 0, 0), true);
-	//}
-
-	pauseMenu_->Draw();
+	//pauseMenu_->Draw();
 
 	auto iu = ConvWorldPosToScreenPos(circlePos_);
 }
@@ -324,7 +297,7 @@ void GameScene::CircleCollisionSet(void)
 	VECTOR soundPos = circlePos_;
 	float distance = VSize(VSub(soundPos, playerPos));
 
-	const float MAX_DISTANCE = 1000.0f; // 聞こえる最大距離
+	const float MAX_DISTANCE = 2000.0f; // 聞こえる最大距離
 	const int MAX_VOLUME = 255;
 	const int MIN_VOLUME = 0;
 
@@ -346,4 +319,9 @@ void GameScene::CircleMove(void)
 	circlePos_.y += pow * SceneManager::GetInstance().GetDeltaTime();
 
 	isMove = true;
+
+	if (circlePos_.y < 0)
+	{
+		isMove = false;
+	}
 }

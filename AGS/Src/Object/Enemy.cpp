@@ -33,7 +33,7 @@ void Enemy::Init(void)
 	animationController_ = new AnimationController(modelId_);
 	for (int i = 0; i < static_cast<int>(ANIM_TYPE::MAX); i++)
 	{
-		animationController_->AddInFbx(i, 15.0f, i);
+		animationController_->AddInFbx(i, 0.0f, i);
 	}
 	animationController_->Play(static_cast<int>(ANIM_TYPE::WALK));
 	MV1SetPosition(modelId_, { 3060.0f, 0.0f, 5000.0f });

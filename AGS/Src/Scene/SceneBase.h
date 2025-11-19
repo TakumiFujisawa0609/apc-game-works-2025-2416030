@@ -1,7 +1,6 @@
 #pragma once
-#include "PauseMenu.h"
 
-class PauseMenu;
+//class PauseMenu;
 
 class SceneBase
 {
@@ -27,5 +26,6 @@ public:
 	virtual void Release(void) = 0;
 
 protected:
-	PauseMenu* pauseMenu_;
+	//PauseMenu* pauseMenu_;
+	//int rePress, newPress;
 };

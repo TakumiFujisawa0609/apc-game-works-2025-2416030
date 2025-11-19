@@ -4,6 +4,7 @@
 class SceneBase;
 class Fader;
 class Camera;
+class PauseMenu;
 
 class SceneManager
 {
@@ -66,7 +67,7 @@ public:
 	void CreateLight(void);
 	void DeleteLight(void);
 
-	void CreateLight();
+	void CreateSetLight();
 	
 
 	void SetPointLightPos(VECTOR pos)
@@ -85,7 +86,7 @@ private:
 		int handle;      // ライトハンドル
 	};
 
-	// 3つ分用意
+	// 2つ分用意
 	LightInfo lights_[LIGHT_LENGTH];
 
 	// 静的インスタンス
@@ -103,6 +104,9 @@ private:
 	// カメラ
 	Camera* camera_;
 
+	PauseMenu* pauseMenu_;
+	int rePress, newPress;
+
 	// シーン遷移中判定
 	bool isSceneChanging_;
 
@@ -111,12 +115,6 @@ private:
 	float deltaTime_;
 
 	VECTOR pointLightPos_;	//ライトの位置
-	VECTOR pointLight1Pos_;	//ライトの位置
-	VECTOR pointLight2Pos_;	//ライトの位置
-	float pointLight1_;
-	float pointLight2_;
-
-	VECTOR spotLightPos_;
 
 	float lightPow_;
 
