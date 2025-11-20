@@ -4,7 +4,6 @@
 class SceneBase;
 class Fader;
 class Camera;
-class PauseMenu;
 
 class SceneManager
 {
@@ -104,7 +103,7 @@ private:
 	// ƒJƒƒ‰
 	Camera* camera_;
 
-	PauseMenu* pauseMenu_;
+	//PauseMenu* pauseMenu_;
 	int rePress, newPress;
 
 	// ƒV[ƒ“‘JˆÚ’†”»’è

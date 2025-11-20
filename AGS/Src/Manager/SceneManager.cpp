@@ -57,7 +57,7 @@ void SceneManager::Init(void)
 
 	lightPow_ = 0.001f;
 
-	pauseMenu_ = new PauseMenu();
+	//pauseMenu_ = new PauseMenu();
 
 	rePress = newPress = 0;
 }
@@ -149,20 +149,20 @@ void SceneManager::Update(void)
 		rePress = newPress;
 		newPress = CheckHitKey(KEY_INPUT_ESCAPE);
 
-		// Escapeキーでポーズ切り替え
-		if ((rePress == 0 && newPress == 1))
-		{
-			pauseMenu_->Toggle();
-		}
+		//// Escapeキーでポーズ切り替え
+		//if ((rePress == 0 && newPress == 1))
+		//{
+		//	pauseMenu_->Toggle();
+		//}
 
-		if (pauseMenu_->IsActive())
-		{
-			pauseMenu_->Update();
-			return; // ポーズ中はゲーム更新停止
-		}
+		//if (pauseMenu_->IsActive())
+		//{
+		//	pauseMenu_->Update();
+		//	return; // ポーズ中はゲーム更新停止
+		//}
 
 		// 各シーンの更新処理
-		scene_->Update();
+		scene_->UpdateBase();
 		UpdateLight();
 	}
 }
@@ -288,6 +288,8 @@ void SceneManager::Draw(void)
 	SetUseBackCulling(FALSE);
 	//DrawSphere3D(pointLightPos_, 80.0f, 10, GetColor(255, 255, 0), GetColor(255, 255, 0), TRUE);
 	SetUseBackCulling(TRUE);
+
+	//pauseMenu_->Draw();
 }
 
 void SceneManager::Destroy(void)
@@ -299,6 +301,8 @@ void SceneManager::Destroy(void)
 
 	// フェード機能の解放
 	delete fader_;
+
+	//delete pauseMenu_;
 
 	// インスタンスのメモリ解放
 	delete instance_;

@@ -1,11 +1,17 @@
 #pragma once
+#include "PauseMenu.h"
 
-//class PauseMenu;
+class PauseMenu;
 
 class SceneBase
 {
 
 public:
+	enum PAUSE_SCENE
+	{
+		MAIN,       // pause 通常メニュー
+		CONFIRM     // 終了確認
+	};
 
 	// コンストラクタ
 	SceneBase(void);
@@ -25,7 +31,10 @@ public:
 	// 解放処理
 	virtual void Release(void) = 0;
 
+	void UpdateBase(void);
 protected:
-	//PauseMenu* pauseMenu_;
-	//int rePress, newPress;
+	PauseMenu* pauseMenu_;
+	int rePress, newPress;
+
+	PauseMenu::MENU_STATE state_;
 };

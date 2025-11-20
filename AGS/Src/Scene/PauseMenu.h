@@ -6,6 +6,11 @@
 class PauseMenu
 {
 public:
+    enum class MENU_STATE {
+        MAIN,       // pause 通常メニュー
+        CONFIRM     // 終了確認
+    };
+
     PauseMenu()
         : isActive_(false), selectedIndex_(0)
     {
@@ -14,7 +19,7 @@ public:
     }
 
     void Toggle() { isActive_ = !isActive_; }
-    void GameExitConfirm() { state_ = MENU_STATE::CONFIRM; isConfirm_ = true; }
+    void GameExitConfirm() { state_ = MENU_STATE::CONFIRM; isConfirm_ = true; isActive_ = !isActive_; }
     bool IsActive() const { return isActive_; }
 
     // 入力処理
@@ -27,10 +32,6 @@ public:
     int GetSelectedIndex() const { return selectedIndex_; }
 
 private:
-    enum class MENU_STATE {
-        MAIN,       // pause 通常メニュー
-        CONFIRM     // 終了確認
-    };
 
     MENU_STATE state_ = MENU_STATE::MAIN;
     bool isConfirm_ = false;

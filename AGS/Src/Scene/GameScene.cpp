@@ -4,6 +4,7 @@
 #include "../Object/Stage.h"
 #include "../Object/Enemy.h"
 #include "../Manager/Camera.h"
+#include "PauseMenu.h"
 #include "GameScene.h"
 #include <algorithm>
 
@@ -30,11 +31,11 @@ void GameScene::Init(void)
 
 	seId_ = LoadSoundMem((Application::PATH_SE + "Aura.mp3").c_str());
 
-	//pauseMenu_ = new PauseMenu();
+	pauseMenu_ = new PauseMenu();
 
 	isMove = false;
 
-	//rePress = newPress = 0;
+	rePress = newPress = 0;
 
 	footSeId_ = LoadSoundMem((Application::PATH_SE + "FootStep.mp3").c_str());
 	ChangeVolumeSoundMem(200.0f, footSeId_);
@@ -48,8 +49,8 @@ void GameScene::Update(void)
 	InputManager::JOYPAD_IN_STATE padState =
 		ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1);
 
-	//rePress = newPress;
-	//newPress = ins.IsNew(KEY_INPUT_ESCAPE);
+	rePress = newPress;
+	newPress = ins.IsNew(KEY_INPUT_ESCAPE);
 
 	if (ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP))
 	{
@@ -60,17 +61,17 @@ void GameScene::Update(void)
 		//printfDx("Keyboard UP Trigger\n");
 	}
 
-	//// Escapeキーでポーズ切り替え
-	//if ((rePress == 0 && newPress == 1))
-	//{
-	//	pauseMenu_->Toggle();
-	//}
+	// Escapeキーでポーズ切り替え
+	if ((rePress == 0 && newPress == 1))
+	{
+		pauseMenu_->Toggle();
+	}
 
-	//if (pauseMenu_->IsActive())
-	//{
-	//	pauseMenu_->Update();
-	//	return; // ポーズ中はゲーム更新停止
-	//}
+	if (pauseMenu_->IsActive())
+	{
+		pauseMenu_->Update();
+		return; // ポーズ中はゲーム更新停止
+	}
 
 	if (SceneManager::GetInstance().GetCamera().GetIsMove())
 	{
@@ -171,7 +172,7 @@ void GameScene::Draw(void)
 	enemy_->Draw();
 	SetUseZBuffer3D(TRUE);
 
-	//pauseMenu_->Draw();
+	pauseMenu_->Draw();
 
 	auto iu = ConvWorldPosToScreenPos(circlePos_);
 }
@@ -185,6 +186,8 @@ void GameScene::Release(void)
 	enemy_->Release();
 	delete enemy_;
 	enemy_ = nullptr;
+
+	delete pauseMenu_;
 
 	StopSoundMem(seId_);
 	DeleteSoundMem(seId_);

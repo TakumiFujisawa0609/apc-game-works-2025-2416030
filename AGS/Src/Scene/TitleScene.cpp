@@ -5,6 +5,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Grid.h"
+#include "PauseMenu.h"
 #include "TitleScene.h"
 
 TitleScene::TitleScene(void)
@@ -24,6 +25,8 @@ void TitleScene::Init(void)
 	grid_->Init();
 
 	imgTitle_ = LoadGraph((Application::PATH_IMAGE + "ppap.png").c_str());
+
+	pauseMenu_ = new PauseMenu();
 }
 
 void TitleScene::Update(void)
@@ -35,11 +38,6 @@ void TitleScene::Update(void)
 	if (ins.IsTrgDown(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	}
-
-	if (CheckHitKey(KEY_INPUT_ESCAPE) == 1)
-	{
-		Application::GetInstance().GameEnd();
 	}
 }
 
@@ -120,9 +118,13 @@ void TitleScene::Draw(void)
 
 #pragma endregion
 	DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("Space/Aでスタート", strlen("Space?Aでスタート"))) / 2, Application::SCREEN_SIZE_Y - 30, "Space/Aでスタート", GetColor(255, 255, 255));
+
+	pauseMenu_->Draw();
 }
 
 void TitleScene::Release(void)
 {
 	DeleteGraph(imgTitle_);
+
+	delete pauseMenu_;
 }
