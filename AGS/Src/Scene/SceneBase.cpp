@@ -38,9 +38,19 @@ void SceneBase::UpdateBase(void)
 	newPress = ins.IsNew(KEY_INPUT_ESCAPE);
 
 	// Escapeキーでポーズ切り替え
-	if ((rePress == 0 && newPress == 1) || padState.IsTrgDown)
+	if ((rePress == 0 && newPress == 1))
 	{
-		pauseMenu_->Toggle();
+		switch (state_)
+		{
+		case PauseMenu::MENU_STATE::MAIN:
+			pauseMenu_->Toggle();
+			break;
+		case PauseMenu::MENU_STATE::CONFIRM:
+			pauseMenu_->GameExitConfirm();
+			break;
+		default:
+			break;
+		}
 	}
 
 	if (pauseMenu_->IsActive())

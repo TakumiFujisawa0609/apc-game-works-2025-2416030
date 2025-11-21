@@ -69,13 +69,13 @@ public:
 	void CreateSetLight();
 	
 
-	void SetPointLightPos(VECTOR pos)
-	{
-		pointLightPos_ = pos;
-	}
-	void IsPointLightPow() { lightPow_ = 0.00000001f; }
+	void SetPointLightPos(VECTOR pos);
+
+	void IsPointLightPow(VECTOR pos);
 
 	VECTOR GetLightPos() { return pointLightPos_; }
+
+	void SetIsPause(bool isPause) { isPause_ = isPause; }
 
 private:
 
@@ -83,6 +83,8 @@ private:
 	{
 		bool isActive;   // ライトを使うかどうか
 		int handle;      // ライトハンドル
+		float lightPow;
+		VECTOR pos;
 	};
 
 	// 2つ分用意
@@ -125,6 +127,8 @@ private:
 	int FPSCounter;
 	LONGLONG FPSCheckTime;
 	//---------------------
+
+	bool isPause_;
 	
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

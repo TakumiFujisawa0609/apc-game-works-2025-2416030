@@ -6,7 +6,13 @@
 
 void PauseMenu::Update()
 {
-    if (!isActive_) return;
+    if (!isActive_) 
+    {
+        SceneManager::GetInstance().SetIsPause(false);
+        return;
+    }
+
+    SceneManager::GetInstance().SetIsPause(true);
 
     auto& ins = InputManager::GetInstance();
 
@@ -47,6 +53,7 @@ void PauseMenu::Update()
             switch (selectedIndex_)
             {
             case 0: // 再開
+                SceneManager::GetInstance().SetIsPause(false);
                 isActive_ = false;
                 break;
 
@@ -57,6 +64,7 @@ void PauseMenu::Update()
             case 2: // 終了 → 確認状態へ
                 if (isConfirm_)
                 {
+                    SceneManager::GetInstance().SetIsPause(false);
                     isActive_ = false;
                     break;
                 }
@@ -98,6 +106,11 @@ void PauseMenu::Update()
                 // いいえ → メインメニューに戻る
                 state_ = MENU_STATE::MAIN;
                 selectedIndex_ = 0;
+                if (isConfirm_) 
+                {
+                    SceneManager::GetInstance().SetIsPause(false);
+                    isActive_ = false;
+                }
             }
         }
     }

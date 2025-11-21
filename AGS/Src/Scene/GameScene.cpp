@@ -39,6 +39,8 @@ void GameScene::Init(void)
 
 	footSeId_ = LoadSoundMem((Application::PATH_SE + "FootStep.mp3").c_str());
 	ChangeVolumeSoundMem(200.0f, footSeId_);
+
+	state_ = PauseMenu::MENU_STATE::MAIN;
 }
 
 void GameScene::Update(void)
@@ -187,7 +189,7 @@ void GameScene::Release(void)
 	delete enemy_;
 	enemy_ = nullptr;
 
-	delete pauseMenu_;
+	//delete pauseMenu_;
 
 	StopSoundMem(seId_);
 	DeleteSoundMem(seId_);
@@ -289,7 +291,7 @@ void GameScene::CircleCollisionSet(void)
 
 	// 接地
 	sceneMana.SetPointLightPos(circlePos_);
-	sceneMana.IsPointLightPow();
+	sceneMana.IsPointLightPow(circlePos_);
 	enemy_->SetTargetPos(circlePos_);
 	isCollision_ = true;
 	SceneManager::GetInstance().GetCamera().SetFarClip(1800.0f);

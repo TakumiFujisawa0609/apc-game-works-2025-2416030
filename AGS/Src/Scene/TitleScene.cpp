@@ -27,11 +27,13 @@ void TitleScene::Init(void)
 	imgTitle_ = LoadGraph((Application::PATH_IMAGE + "ppap.png").c_str());
 
 	pauseMenu_ = new PauseMenu();
+
+	state_ = PauseMenu::MENU_STATE::CONFIRM;
 }
 
 void TitleScene::Update(void)
 {
-	grid_->Update();
+	//grid_->Update();
 
 	// ƒV[ƒ“‘JˆÚ
 	InputManager& ins = InputManager::GetInstance();

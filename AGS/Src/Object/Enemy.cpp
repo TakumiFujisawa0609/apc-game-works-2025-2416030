@@ -44,6 +44,7 @@ void Enemy::Update(void)
 {
 	Move();
 	// アニメーション再生
+	animationController_->Play(static_cast<int>(ANIM_TYPE::WALK));
 	animationController_->Update();
 }
 

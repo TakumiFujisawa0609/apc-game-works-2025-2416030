@@ -13,6 +13,7 @@ GameClear::~GameClear(void)
 
 void GameClear::Init(void)
 {
+	pauseMenu_ = new PauseMenu();
 }
 
 void GameClear::Update(void)
@@ -24,9 +25,9 @@ void GameClear::Update(void)
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 
-	if (CheckHitKey(KEY_INPUT_ESCAPE) == 1)
+	if (ins.IsTrgDown(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 	{
-		Application::GetInstance().GameEnd();
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
 }
 
