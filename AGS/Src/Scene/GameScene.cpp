@@ -276,7 +276,7 @@ bool GameScene::EnemyCollision(void)
 	auto cPos = SceneManager::GetInstance().GetCamera().GetPos();
 	cPos.y -= 300.0f;
 
-	if (AsoUtility::IsHitSpheres(cPos, 20.0f, enemy_->GetPos(), 20.0f))
+	if (AsoUtility::IsHitSpheres(cPos, 100.0f, enemy_->GetPos(), 100.0f))
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 		return true;

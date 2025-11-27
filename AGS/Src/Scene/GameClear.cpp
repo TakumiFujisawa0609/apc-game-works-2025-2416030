@@ -14,6 +14,8 @@ GameClear::~GameClear(void)
 void GameClear::Init(void)
 {
 	pauseMenu_ = new PauseMenu();
+
+	imgTitle_ = LoadGraph((Application::PATH_IMAGE + "Clear.png").c_str());
 }
 
 void GameClear::Update(void)
@@ -24,20 +26,21 @@ void GameClear::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
-
-	if (ins.IsTrgDown(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
-	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	}
 }
 
 void GameClear::Draw(void)
 {
-	DrawString(0,0, "ゲームクリア", GetColor(255, 255, 255));
+	//DrawString(0,0, "ゲームクリア", GetColor(255, 255, 255));
+
+	DrawRotaGraph(
+		Application::SCREEN_SIZE_X / 2,
+		Application::SCREEN_SIZE_Y / 2,
+		0.5f, 0.0, imgTitle_, true);
 
 	DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("Space/Aで戻る", strlen("Space/Aで戻る"))) / 2, Application::SCREEN_SIZE_Y - 30, "Space/Aで戻る", GetColor(255, 255, 255));
 }
 
 void GameClear::Release(void)
 {
+	DeleteGraph(imgTitle_);
 }

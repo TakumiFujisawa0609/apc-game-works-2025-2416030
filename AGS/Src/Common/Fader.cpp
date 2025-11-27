@@ -95,7 +95,7 @@ void Fader::Draw(void)
 			0, 0,
 			Application::SCREEN_SIZE_X,
 			Application::SCREEN_SIZE_Y,
-			0x000000, true);
+			0x00000, true);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		break;
 	}

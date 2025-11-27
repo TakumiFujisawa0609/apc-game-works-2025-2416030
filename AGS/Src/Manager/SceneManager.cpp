@@ -248,7 +248,7 @@ void SceneManager::UpdateLight(void)
 
 		float pow = L.lightPow;
 
-		SetLightPositionHandle(L.handle, pointLightPos_);
+		SetLightPositionHandle(L.handle, L.pos);
 
 		// GetColorF(r,g,b) ‚ÅOK
 		auto col = GetColorF(L.lightPow, L.lightPow, L.lightPow, 1.0f);
@@ -345,6 +345,8 @@ void SceneManager::Draw(void)
 	SetUseBackCulling(TRUE);
 
 	//pauseMenu_->Draw();
+
+	//DrawFormatString(0, 0, GetColor(255, 255, 255), "%f\n%f", lights_[0].lightPow, lights_[1].lightPow);
 }
 
 void SceneManager::Destroy(void)
@@ -450,14 +452,14 @@ void SceneManager::IsPointLightPow(VECTOR pos)
 
 	for (int i = 1; i < LIGHT_LENGTH; i++)
 	{
-		if (max >= lights_[i].lightPow)
+		if (max <= lights_[i].lightPow)
 		{
-			max = lights_[i].lightPow;
+ 			max = lights_[i].lightPow;
 			answer = i;
 		}
 	}
 
-	lights_[answer].lightPow = 0.00000001f;
+	lights_[answer].lightPow = 0.0f;
 	lights_[answer].pos = pos;
 
 	/*if(lights_[0].lightPow >= lights_[1].lightPow)

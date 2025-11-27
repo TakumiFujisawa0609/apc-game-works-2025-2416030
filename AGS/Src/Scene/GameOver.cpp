@@ -15,6 +15,9 @@ GameOver::~GameOver(void)
 void GameOver::Init(void)
 {
 	pauseMenu_ = new PauseMenu();
+
+	imgTitle_ = LoadGraph((Application::PATH_IMAGE + "Over.png").c_str());
+
 }
 
 void GameOver::Update(void)
@@ -25,20 +28,21 @@ void GameOver::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
-
-	if (ins.IsTrgDown(KEY_INPUT_SPACE) || ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
-	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	}
 }
 
 void GameOver::Draw(void)
 {
-	DrawString(0, 0, "ゲームオーバー", GetColor(255, 255, 255));
+	//DrawString(0, 0, "ゲームオーバー", GetColor(255, 255, 255));
+
+	DrawRotaGraph(
+		Application::SCREEN_SIZE_X / 2,
+		Application::SCREEN_SIZE_Y / 2,
+		0.5f, 0.0, imgTitle_, true);
 
 	DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("Space/Aで戻る", strlen("Space/Aで戻る"))) / 2, Application::SCREEN_SIZE_Y - 30, "Space/Aで戻る", GetColor(255, 255, 255));
 }
 
 void GameOver::Release(void)
 {
+	DeleteGraph(imgTitle_);
 }

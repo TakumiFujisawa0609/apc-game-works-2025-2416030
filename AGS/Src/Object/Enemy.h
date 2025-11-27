@@ -49,9 +49,11 @@ public:
 	void Draw(void);
 	void Release(void);
 
-	void SetTargetPos(VECTOR pos) { targetPos_ = pos; isMoveSpot_ = true; }
+	void SetTargetPos(VECTOR pos) { targetPos_ = pos; isMoveSpot_ = true; isCollision_ = true; }
 	VECTOR GetPos(void) { return pos_; }
 	VECTOR GetHeadPos(void);
+
+	void LookAtCameraAndSetMatrix(int modelId, VECTOR& pos, float& currentAngleY, const VECTOR& cameraPos, float lerpSpeed);
 private:
 
 	static constexpr VECTOR SPOT1_POS = { -60.0f, 300.0f, 4775.0f };
@@ -83,6 +85,8 @@ private:
 	VECTOR targetPos_;
 
 	bool isMoveSpot_;
+
+	bool isCollision_ = false;
 
 	void Move();
 };

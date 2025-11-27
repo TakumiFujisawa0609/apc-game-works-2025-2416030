@@ -33,10 +33,16 @@ void Enemy::Init(void)
 	animationController_ = new AnimationController(modelId_);
 	for (int i = 0; i < static_cast<int>(ANIM_TYPE::MAX); i++)
 	{
-		animationController_->AddInFbx(i, 0.0f, i);
+		if (i == static_cast<int>(ANIM_TYPE::WAVE)) 
+		{
+			animationController_->AddInFbx(i, 50.0f, i);
+			continue;
+		}
+		animationController_->AddInFbx(i, 30.0f, i);
 	}
-	animationController_->Play(static_cast<int>(ANIM_TYPE::WALK));
-	MV1SetPosition(modelId_, { 3060.0f, 0.0f, 5000.0f });
+	animationController_->Play(static_cast<int>(ANIM_TYPE::WAVE));
+	pos_ = { 0.0f, 0.0f, 0.0f };
+	MV1SetPosition(modelId_, pos_);
 	MV1SetRotationXYZ(modelId_, { 0.0f, 0.0f, 0.0f });
 }
 
@@ -44,7 +50,6 @@ void Enemy::Update(void)
 {
 	Move();
 	// アニメーション再生
-	animationController_->Play(static_cast<int>(ANIM_TYPE::WALK));
 	animationController_->Update();
 }
 
@@ -54,6 +59,7 @@ void Enemy::Draw(void)
 	//MV1SetMaterialOutLineColor(modelId_, GetColor(255, 0, 0));  // 赤い縁取りなど
 	//MV1SetUseOrigShader(TRUE);  // モデルの陰影をオフ
 	MV1DrawModel(modelId_);
+	//animationController_->Debug();
 }
 
 void Enemy::Release(void)
@@ -96,6 +102,16 @@ void Enemy::Move()
 		{
 			// 到着
 			isMoveSpot_ = false;
+			isCollision_ = false;
+		}
+
+		if(isCollision_)
+		{
+			animationController_->Play(static_cast<int>(ANIM_TYPE::RUN));
+		}
+		else
+		{
+			animationController_->Play(static_cast<int>(ANIM_TYPE::WAVE));
 		}
 	}
 	else
@@ -129,3 +145,37 @@ void Enemy::Move()
 	MV1SetMatrix(modelId_, rotMat);
 }
 
+//-----------------------------------------
+// 敵モデルをカメラに向かせる（線形補完 + 行列セットまで）
+//-----------------------------------------
+void Enemy::LookAtCameraAndSetMatrix(int modelId, VECTOR& pos, float& currentAngleY, const VECTOR& cameraPos, float lerpSpeed)
+{
+	animationController_->Play(static_cast<int>(ANIM_TYPE::IDLE));
+	// デルタタイム
+	float dt = SceneManager::GetInstance().GetDeltaTime();
+	float t = lerpSpeed * dt; // 補間速度
+
+	// 敵→カメラの方向ベクトル
+	VECTOR diff = VSub(cameraPos, pos);
+	diff.y = 0.0f; // 水平回転のみ
+
+	VECTOR targetDir = AsoUtility::VNormalize(diff);
+
+	// 現在の角度を atan2 で取得（X/Z平面）
+	float targetAngleY = atan2f(targetDir.x, targetDir.z);
+
+	// モデルの正面が逆向きの場合は補正
+	const float angleOffset = DX_PI_F;
+	targetAngleY += angleOffset;
+
+	// 線形補完
+	currentAngleY = AsoUtility::Lerp(currentAngleY, targetAngleY, t);
+
+	// 行列セット
+	MATRIX rotMat = MGetRotY(currentAngleY);
+	rotMat.m[3][0] = pos.x;
+	rotMat.m[3][1] = pos.y;
+	rotMat.m[3][2] = pos.z;
+
+	MV1SetMatrix(modelId, rotMat);
+}

@@ -159,7 +159,7 @@ void PauseMenu::Draw()
     // ==========================================
     else if (state_ == MENU_STATE::CONFIRM)
     {
-        DrawString(460, 260, "ゲームを終了しますか？", GetColor(255, 255, 255));
+        DrawString(430, 260, "ゲームを終了しますか？", GetColor(255, 255, 255));
 
         int y = 350;
 
@@ -167,14 +167,14 @@ void PauseMenu::Draw()
         {
             const char* cursor = (selectedIndex_ == 0) ? "→ " : "   ";
             int color = (selectedIndex_ == 0) ? GetColor(255, 255, 0) : GetColor(200, 200, 200);
-            DrawFormatString(430, y, color, "%sはい", cursor);
+            DrawFormatString(380, y, color, "%sはい", cursor);
         }
 
         // いいえ
         {
             const char* cursor = (selectedIndex_ == 1) ? "→ " : "   ";
             int color = (selectedIndex_ == 1) ? GetColor(255, 255, 0) : GetColor(200, 200, 200);
-            DrawFormatString(630, y, color, "%sいいえ", cursor);
+            DrawFormatString(580, y, color, "%sいいえ", cursor);
         }
     }
 }

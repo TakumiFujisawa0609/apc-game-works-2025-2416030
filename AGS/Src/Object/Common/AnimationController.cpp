@@ -66,6 +66,8 @@ void AnimationController::Play(int type, bool isLoop)
 		
 	// アニメーション総時間の取得
 	playAnim_.totalTime = MV1GetAttachAnimTotalTime(modelId_, playAnim_.attachNo);
+
+	playAnim_.speed = playAnim_.totalTime / playAnim_.speed;
 	
 #if 0
 	// モデルにアニメーションを付ける
@@ -130,6 +132,11 @@ bool AnimationController::IsNotLoopEnd(void) const
 int AnimationController::GetPlayType(void) const
 {
 	return playType_;
+}
+
+void AnimationController::Debug(void)
+{
+	DrawFormatString(0, 0, GetColor(255, 255, 255), "%.1f", playAnim_.step);
 }
 
 void AnimationController::Add(int type, float speed, Animation& animation)
