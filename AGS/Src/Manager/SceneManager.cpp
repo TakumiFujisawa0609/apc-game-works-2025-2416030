@@ -1,5 +1,6 @@
 #include <EffekseerForDXLib.h>
 #include "../Common/Fader.h"
+#include "../Common/Light.h"
 #include "../Scene/TitleScene.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/GameOver.h"
@@ -320,7 +321,8 @@ void SceneManager::Draw(void)
 	SetLightPosition(pointLightPos_);
 	//SetLightPositionHandle(lights_[0].handle, { pointLightPos_.x,pointLightPos_.y + 200.0f,pointLightPos_.z });
 	
-	SetLightRangeAtten(400.0f, 0.000001f, lights_[1].lightPow, 0.0000001f);
+	SetLightRangeAtten(400.0f, 0.000001f, lights_[0].lightPow, 0.0000001f);
+	//SetLightRangeAttenHandle(lights_[1].handle, 400.0f, 0.000001f, lights_[1].lightPow, 0.0000001f);
 	// 標準ライトのディフューズカラーを青色にする
 	//SetLightDifColor(GetColorF(255.0f, 255.0f, 255.0f, 0.0f));
 
@@ -346,7 +348,7 @@ void SceneManager::Draw(void)
 
 	//pauseMenu_->Draw();
 
-	//DrawFormatString(0, 0, GetColor(255, 255, 255), "%f\n%f", lights_[0].lightPow, lights_[1].lightPow);
+	DrawFormatString(0, 0, GetColor(255, 255, 255), "%f\n%f", lights_[0].lightPow, lights_[1].lightPow);
 }
 
 void SceneManager::Destroy(void)
@@ -363,6 +365,12 @@ void SceneManager::Destroy(void)
 
 	// インスタンスのメモリ解放
 	delete instance_;
+
+	for (auto& l : lights)
+	{
+		l.Destroy();
+	}
+	lights.clear();
 
 	// ライトハンドルの削除
 	DeleteLight();
@@ -397,6 +405,12 @@ float SceneManager::GetDeltaTime(void) const
 
 void SceneManager::CreateLight(void)
 {
+	lights.resize((size_t)LIGHT_LENGTH);    // 今の配列サイズをそのまま
+	for (auto& l : lights)
+	{
+		l.Init();
+	}
+
 	for (int i = 0; i < LIGHT_LENGTH; i++)
 	{
 		lights_[i].isActive = false;
@@ -446,6 +460,16 @@ void SceneManager::SetPointLightPos(VECTOR pos)
 
 void SceneManager::IsPointLightPow(VECTOR pos)
 {
+	for (auto& l : lights)
+	{
+		if (!l.IsActive())
+		{
+			l.SetPosition(pos);
+			l.SetActive(true);
+			break;
+		}
+	}
+
 	int answer = 0;
 
 	auto max = lights_[0].lightPow;
