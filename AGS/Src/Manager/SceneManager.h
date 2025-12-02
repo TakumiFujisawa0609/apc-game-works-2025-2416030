@@ -4,7 +4,6 @@
 class SceneBase;
 class Fader;
 class Camera;
-class Light;
 
 class SceneManager
 {
@@ -90,8 +89,6 @@ private:
 
 	// 2つ分用意
 	LightInfo lights_[LIGHT_LENGTH];
-
-	std::vector<Light> lights;
 
 	// 静的インスタンス
 	static SceneManager* instance_;
