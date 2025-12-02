@@ -1,4 +1,5 @@
-﻿  PauseMenu.cpp
+﻿  Light.cpp
+  PauseMenu.cpp
   Enemy.cpp
   GameClear.cpp
 C:\Project\AGS_Winter\AGS\Src\Scene\GameClear.cpp(40,88): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
@@ -19,15 +20,15 @@ C:\Project\AGS_Winter\AGS\Src\Scene\GameClear.cpp(40,88): warning C4267: '引数
   GameScene.cpp
 C:\Project\AGS_Winter\AGS\Src\Scene\GameScene.cpp(41,23): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
   SceneBase.cpp
+  コンパイル中...
   TitleScene.cpp
 C:\Project\AGS_Winter\AGS\Src\Scene\TitleScene.cpp(122,94): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
-  コンパイル中...
   AsoUtility.cpp
   GameOver.cpp
 C:\Project\AGS_Winter\AGS\Src\Scene\GameOver.cpp(42,88): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
   コード生成しています。
   Previous IPDB was built with incompatible compiler, fall back to full compilation.
-  All 851 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 909 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   コード生成が終了しました。
 EffekseerForDXLib_vs2019_x64.lib(EffekseerForDXLib.obj) : warning LNK4099: PDB '' が 'EffekseerForDXLib_vs2019_x64.lib(EffekseerForDXLib.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
   AGS.vcxproj -> C:\Project\AGS_Winter\AGS\x64\Release\AGS.exe
