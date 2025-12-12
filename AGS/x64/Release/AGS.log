@@ -1,34 +1,8 @@
-﻿  Light.cpp
-  PauseMenu.cpp
-  Enemy.cpp
-  GameClear.cpp
-C:\Project\AGS_Winter\AGS\Src\Scene\GameClear.cpp(40,88): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
-  Player.cpp
-  Application.cpp
-  Fader.cpp
-  Quaternion.cpp
-  Vector2.cpp
-  main.cpp
-  Camera.cpp
-  InputManager.cpp
-  SceneManager.cpp
-  AnimationController.cpp
-  Grid.cpp
-  ShotBase.cpp
-  ShotNormal.cpp
-  Stage.cpp
-  GameScene.cpp
-C:\Project\AGS_Winter\AGS\Src\Scene\GameScene.cpp(41,23): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-  SceneBase.cpp
-  コンパイル中...
-  TitleScene.cpp
-C:\Project\AGS_Winter\AGS\Src\Scene\TitleScene.cpp(122,94): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
-  AsoUtility.cpp
-  GameOver.cpp
-C:\Project\AGS_Winter\AGS\Src\Scene\GameOver.cpp(42,88): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+﻿  main.cpp
   コード生成しています。
-  Previous IPDB was built with incompatible compiler, fall back to full compilation.
-  All 909 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  1 of 850 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
 EffekseerForDXLib_vs2019_x64.lib(EffekseerForDXLib.obj) : warning LNK4099: PDB '' が 'EffekseerForDXLib_vs2019_x64.lib(EffekseerForDXLib.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
   AGS.vcxproj -> C:\Project\AGS_Winter\AGS\x64\Release\AGS.exe

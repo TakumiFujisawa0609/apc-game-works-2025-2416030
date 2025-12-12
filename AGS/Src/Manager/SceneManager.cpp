@@ -81,8 +81,11 @@ void SceneManager::Init3D(void)
 	SetUseBackCulling(false);
 
 	// ライトの設定
-	SetUseLighting(TRUE); // ← これを有効に！
-	SetLightEnable(TRUE); // ← これもセットで！
+	//SetUseLighting(TRUE); // ← これを有効に！
+	//SetLightEnable(TRUE); // ← これもセットで！
+
+	SetUseLighting(TRUE);   // ライティング自体は有効
+	SetLightEnable(FALSE);  // 標準ライトは無効化（自前ハンドルを使うため）
 
 	// ディレクショナルライト方向の設定（正規化されてなくてもいい）
 	// 正面から斜め下に向かったライト
@@ -316,33 +319,23 @@ void SceneManager::Draw(void)
 	if (CheckHitKey(KEY_INPUT_Y)) { pointLightPos_.y -= 3.0f; }
 	if (CheckHitKey(KEY_INPUT_H)) { pointLightPos_.x += 3.0f; }
 	if (CheckHitKey(KEY_INPUT_F)) { pointLightPos_.x -= 3.0f; }*/
+
+	for (int i = 0; i < LIGHT_LENGTH; i++)
+	{
+		SetLightPositionHandle(lights_[i].handle, lights_[i].pos);
+		SetLightRangeAttenHandle(lights_[i].handle,400.0f, 0.000001f, lights_[i].lightPow, 0.0000001f);
+	}
 	
-	SetLightPosition(pointLightPos_);
+	///SetLightPosition(pointLightPos_);
 	//SetLightPositionHandle(lights_[0].handle, { pointLightPos_.x,pointLightPos_.y + 200.0f,pointLightPos_.z });
 	
-	SetLightRangeAtten(400.0f, 0.000001f, lights_[1].lightPow, 0.0000001f);
+	//SetLightRangeAtten(400.0f, 0.000001f, lights_[1].lightPow, 0.0000001f);
 	// 標準ライトのディフューズカラーを青色にする
 	//SetLightDifColor(GetColorF(255.0f, 255.0f, 255.0f, 0.0f));
 
 #ifdef _DEBUG
 	//DrawFormatString(10, 10, GetColor(255, 255, 255), "FPS : %.1f", 1.0f / deltaTime_);
 #endif // DEBUG
-
-#pragma endregion
-#pragma region Step2 スポットライト
-	/*if (CheckHitKey(KEY_INPUT_T)) { spotLightPos_.z += 3.0f; }
-	if (CheckHitKey(KEY_INPUT_G)) { spotLightPos_.z -= 3.0f; }
-	if (CheckHitKey(KEY_INPUT_R)) { spotLightPos_.y += 3.0f; }
-	if (CheckHitKey(KEY_INPUT_Y)) { spotLightPos_.y -= 3.0f; }
-	if (CheckHitKey(KEY_INPUT_H)) { spotLightPos_.x += 3.0f; }
-	if (CheckHitKey(KEY_INPUT_F)) { spotLightPos_.x -= 3.0f; }
-	SetLightPosition(spotLightPos_);
-	DrawSphere3D(spotLightPos_, 20.0f, 10, 0xff0000, 0xff0000, true);*/
-#pragma endregion
-
-	SetUseBackCulling(FALSE);
-	//DrawSphere3D(pointLightPos_, 80.0f, 10, GetColor(255, 255, 0), GetColor(255, 255, 0), TRUE);
-	SetUseBackCulling(TRUE);
 
 	//pauseMenu_->Draw();
 
@@ -415,7 +408,7 @@ void SceneManager::CreateLight(void)
 		lights_[i].lightPow = 0.0f;
 
 		// 最初は無効化
-		SetLightEnableHandle(lights_[i].handle, FALSE);
+		SetLightEnableHandle(lights_[i].handle, TRUE);
 	}
 }
 
@@ -452,6 +445,7 @@ void SceneManager::IsPointLightPow(VECTOR pos)
 
 	for (int i = 1; i < LIGHT_LENGTH; i++)
 	{
+		// max以上だったら
 		if (max <= lights_[i].lightPow)
 		{
  			max = lights_[i].lightPow;
@@ -459,19 +453,9 @@ void SceneManager::IsPointLightPow(VECTOR pos)
 		}
 	}
 
+	// 
 	lights_[answer].lightPow = 0.0f;
 	lights_[answer].pos = pos;
-
-	/*if(lights_[0].lightPow >= lights_[1].lightPow)
-	{
-		lights_[0].lightPow = 0.00000001f;
-		lights_[0].pos = pos;
-	}
-	else
-	{
-		lights_[1].lightPow = 0.00000001f;
-		lights_[0].pos = pos;
-	}*/
 }
 
 
