@@ -24,7 +24,7 @@ public:
 	static constexpr float GRAVITY = 9.81f;
 
 	// 配列サイズ
-	static constexpr int LIGHT_LENGTH = 2;
+	static constexpr int LIGHT_LENGTH = 1;
 
 	
 	// インスタンスの生成

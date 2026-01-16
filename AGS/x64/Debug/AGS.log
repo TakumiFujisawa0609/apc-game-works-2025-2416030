@@ -1,2 +1,14 @@
 ﻿  SceneManager.cpp
+C:\Project\AGS_Winter\AGS\Src\Manager\SceneManager.cpp(276,8): warning C4101: 'buf': ローカル変数は 1 度も使われていません。
+Effekseer_vs2019_x64_d.lib(Effekseer.EffectNodeModel.obj) : warning LNK4099: PDB '' が 'Effekseer_vs2019_x64_d.lib(Effekseer.EffectNodeModel.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+Effekseer_vs2019_x64_d.lib(Effekseer.EffectNodeRibbon.obj) : warning LNK4099: PDB '' が 'Effekseer_vs2019_x64_d.lib(Effekseer.EffectNodeRibbon.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+Effekseer_vs2019_x64_d.lib(Effekseer.EffectNodeRing.obj) : warning LNK4099: PDB '' が 'Effekseer_vs2019_x64_d.lib(Effekseer.EffectNodeRing.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+Effekseer_vs2019_x64_d.lib(Effekseer.EffectNodeSprite.obj) : warning LNK4099: PDB '' が 'Effekseer_vs2019_x64_d.lib(Effekseer.EffectNodeSprite.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+Effekseer_vs2019_x64_d.lib(Effekseer.EffectNodeTrack.obj) : warning LNK4099: PDB '' が 'Effekseer_vs2019_x64_d.lib(Effekseer.EffectNodeTrack.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+Effekseer_vs2019_x64_d.lib(Effekseer.Manager.obj) : warning LNK4099: PDB '' が 'Effekseer_vs2019_x64_d.lib(Effekseer.Manager.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+Effekseer_vs2019_x64_d.lib(Effekseer.Parameters.obj) : warning LNK4099: PDB '' が 'Effekseer_vs2019_x64_d.lib(Effekseer.Parameters.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+Effekseer_vs2019_x64_d.lib(Rotation.obj) : warning LNK4099: PDB '' が 'Effekseer_vs2019_x64_d.lib(Rotation.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+Effekseer_vs2019_x64_d.lib(ForceFields.obj) : warning LNK4099: PDB '' が 'Effekseer_vs2019_x64_d.lib(ForceFields.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+EffekseerRendererDX9_vs2019_x64_d.lib(EffekseerRenderer.CommonUtils.obj) : warning LNK4099: PDB '' が 'EffekseerRendererDX9_vs2019_x64_d.lib(EffekseerRenderer.CommonUtils.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+EffekseerForDXLib_vs2019_x64_d.lib(EffekseerForDXLib.obj) : warning LNK4099: PDB '' が 'EffekseerForDXLib_vs2019_x64_d.lib(EffekseerForDXLib.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
   AGS.vcxproj -> C:\Project\AGS_Winter\AGS\x64\Debug\AGS.exe
