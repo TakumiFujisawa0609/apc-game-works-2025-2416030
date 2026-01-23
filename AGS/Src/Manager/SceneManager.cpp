@@ -464,6 +464,10 @@ void SceneManager::IsPointLightPow(VECTOR pos)
 	lights_[answer].pos = pos;
 }
 
+void SceneManager::SetCameraNear(float ne)
+{
+	camera_->SetFarClip(ne);
+}
 
 SceneManager::SceneManager(void)
 {

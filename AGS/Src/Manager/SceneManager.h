@@ -77,6 +77,7 @@ public:
 	void IsPointLightPow(VECTOR pos);
 
 	VECTOR GetLightPos() { return pointLightPos_; }
+	void SetCameraNear(float ne);
 
 	void SetIsPause(bool isPause) { isPause_ = isPause; }
 

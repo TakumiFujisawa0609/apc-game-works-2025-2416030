@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Manager\Light.cpp" />
     <ClCompile Include="Src\Scene\PauseMenu.cpp" />
     <ClCompile Include="Src\Object\Enemy.cpp" />
     <ClCompile Include="Src\Scene\GameClear.cpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="Src\Scene\GameOver.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Manager\Light.h" />
     <ClInclude Include="Src\Scene\PauseMenu.h" />
     <ClInclude Include="Src\Object\Enemy.h" />
     <ClInclude Include="Src\Scene\GameClear.h" />
