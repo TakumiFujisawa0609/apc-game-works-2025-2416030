@@ -23,6 +23,9 @@ public:
 	// 重力
 	static constexpr float GRAVITY = 9.81f;
 
+	static constexpr float MIN_LIGHT_POW = 0.01f;
+	static constexpr float INIT_LIGHT_POW = 0.08f;
+
 	// 配列サイズ
 	static constexpr int LIGHT_LENGTH = 1;
 
@@ -110,6 +113,8 @@ private:
 
 	// シーン遷移中判定
 	bool isSceneChanging_;
+
+	float minusLight = 0.00004f;
 
 	// デルタタイム
 	std::chrono::system_clock::time_point preTime_;

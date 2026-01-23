@@ -237,17 +237,17 @@ void SceneManager::UpdateLight(void)
 
  	for (auto& L : lights_)
 	{
-		if (L.lightPow < 0.01f)
+		if (L.lightPow < MIN_LIGHT_POW)
 		{
 			// ™X‚ÉˆÃ‚­
-			L.lightPow += 0.00004f * GetDeltaTime();
+			L.lightPow += minusLight * GetDeltaTime();
 
 			allInactive = false;
 		}
 		else
 		{
 			// ^‚ÁˆÃ
-			L.lightPow = 0.08f;
+			L.lightPow = INIT_LIGHT_POW;
 			continue;
 		}
 
@@ -255,7 +255,6 @@ void SceneManager::UpdateLight(void)
 
 		SetLightPositionHandle(L.handle, L.pos);
 
-		// GetColorF(r,g,b) ‚ÅOK
 		auto col = GetColorF(L.lightPow, L.lightPow, L.lightPow, 1.0f);
 
 		SetLightDifColorHandle(L.handle, col);

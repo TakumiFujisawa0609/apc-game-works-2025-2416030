@@ -297,7 +297,7 @@ void GameScene::CircleCollisionSet(void)
 	SceneManager::GetInstance().GetCamera().SetFarClip(1800.0f);
 	isMove = false;
 
-	// --- 距離に応じた音量調整 ---
+	// 距離に応じた音量調整
 	VECTOR playerPos = SceneManager::GetInstance().GetCamera().GetPos(); // ← プレイヤーの位置を取得（クラスに応じて変更）
 	VECTOR soundPos = circlePos_;
 	float distance = VSize(VSub(soundPos, playerPos));
