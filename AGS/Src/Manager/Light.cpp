@@ -9,6 +9,23 @@ Light::~Light()
 {
 }
 
+void Light::Init()
+{
+	lightPow_ = 0.001f;
+}
+
+void Light::InitPointLight()
+{
+	int lightID = -1;
+
+	pointLightPos_ = { 0.0f, 40.0f, 180.0f };
+	/*ChangeLightTypePoint(
+		pointLightPos_, 400.0f, 0.000f, 0.001f, 0.000f);*/
+
+	lightID = ChangeLightTypePoint(pointLightPos_, 400.0f, 0.000f, 0.001f, 0.000f);
+	SetLightEnable(true);
+}
+
 void Light::UpdateLight(void)
 {
 	//if (lightPow_ < 0.01f)
@@ -95,17 +112,6 @@ void Light::UpdateLight(void)
 		}
 	}
 
-	// 例：左上にライト情報を表示
-	int y = 10;
-	for (size_t i = 0; i < LIGHT_LENGTH; ++i)
-	{
-		auto& L = lights_[i];
-		char buf[256];
-		//sprintf_s(buf, "L%zu handle=%d pow=%.6f isActive=%d", i, L.handle, L.lightPow, L.isActive ? 1 : 0);
-		//DrawString(10, y, buf, GetColor(255, 255, 255));
-		y += 16;
-	}
-
 	// 二つとも暗いか
 	if (allInactive)
 	{
@@ -132,22 +138,6 @@ void Light::DrawLight(void)
 	//SetLightRangeAttenHandle(lights_[0].handle, 400.0f, 0.000001f, 0.000001f, 0.0000001f);
 	SetLightPosition(lights_[0].pos);
 	SetLightRangeAtten(400.0f, 0.000001f, lights_[0].lightPow, 0.0000001f);
-
-	//SetLightPosition(pointLightPos_);
-	//SetLightPositionHandle(lights_[0].handle, { pointLightPos_.x,pointLightPos_.y + 200.0f,pointLightPos_.z });
-
-	//SetLightRangeAtten(400.0f, 0.000001f, lights_[1].lightPow, 0.0000001f);
-	// 標準ライトのディフューズカラーを青色にする
-	//SetLightDifColor(GetColorF(255.0f, 255.0f, 255.0f, 0.0f));
-
-#ifdef _DEBUG
-	//DrawFormatString(10, 10, GetColor(255, 255, 255), "FPS : %.1f", 1.0f / deltaTime_);
-#endif // DEBUG
-
-	//pauseMenu_->Draw();
-
-	//DrawFormatString(0, 0, GetColor(255, 255, 255), "%f\n%f", lights_[0].lightPow, lights_[1].lightPow);
-	//DrawFormatString(0, 80, GetColor(255, 255, 255), "%d", GetEnableLightHandleNum());
 }
 
 void Light::CreateLight(void)
@@ -191,11 +181,6 @@ void Light::CreateSetLight()
 
 	// Ambient（環境光）だけ残す
 	//SetLightAmbientHandle(0, GetColorF(0.2f, 0.2f, 0.2f));
-}
-
-void Light::SetPointLightPos(VECTOR pos)
-{
-	pointLightPos_ = pos;
 }
 
 void Light::IsPointLightPow(VECTOR pos)

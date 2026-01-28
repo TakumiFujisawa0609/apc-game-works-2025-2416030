@@ -15,6 +15,8 @@ public:
 	// 配列サイズ
 	static constexpr int LIGHT_LENGTH = 1;
 
+	void Init();
+	void InitPointLight();
 	void UpdateLight(void);
 	void DrawLight(void);
 
@@ -22,8 +24,6 @@ public:
 	void DeleteLight(void);
 
 	void CreateSetLight();
-
-	void SetPointLightPos(VECTOR pos);
 
 	void IsPointLightPow(VECTOR pos);
 

@@ -4,6 +4,16 @@
 #include "../Utility/AsoUtility.h"
 #include "../Application.h"
 
+void PauseMenu::Toggle()
+{
+    if (isActive_)
+    {
+        SceneManager::GetInstance().SetIsPause(false);
+    }
+
+    isActive_ = !isActive_;
+}
+
 void PauseMenu::Update()
 {
     if (!isActive_) 
@@ -59,6 +69,7 @@ void PauseMenu::Update()
 
             case 1: // タイトル
                 SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+                SceneManager::GetInstance().SetIsPause(false);
                 break;
 
             case 2: // 終了 → 確認状態へ
@@ -98,7 +109,7 @@ void PauseMenu::Update()
         {
             if (selectedIndex_ == 0)
             {
-                // はい → 本当に終了
+                // はい → 終了
                 Application::GetInstance().GameEnd();
             }
             else

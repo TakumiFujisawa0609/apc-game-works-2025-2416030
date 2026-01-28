@@ -4,6 +4,7 @@
 #include "../Object/Stage.h"
 #include "../Object/Enemy.h"
 #include "../Manager/Camera.h"
+#include "../Manager/Light.h"
 #include "PauseMenu.h"
 #include "GameScene.h"
 #include <algorithm>
@@ -287,11 +288,9 @@ bool GameScene::EnemyCollision(void)
 
 void GameScene::CircleCollisionSet(void)
 {
-	auto& sceneMana = SceneManager::GetInstance();
-
 	// 接地
 	//sceneMana.SetPointLightPos(circlePos_);
-	sceneMana.IsPointLightPow(circlePos_);
+	SceneManager::GetInstance().GetLight().IsPointLightPow(circlePos_);
 	enemy_->SetTargetPos(circlePos_);
 	isCollision_ = true;
 	SceneManager::GetInstance().GetCamera().SetFarClip(1800.0f);

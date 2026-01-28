@@ -18,7 +18,7 @@ public:
         isT = false;
     }
 
-    void Toggle() { isActive_ = !isActive_; }
+    void Toggle();
     void GameExitConfirm() { state_ = MENU_STATE::CONFIRM; isConfirm_ = true; isActive_ = !isActive_; }
     bool IsActive() const { return isActive_; }
 
