@@ -27,9 +27,29 @@ void TitleScene::Init(void)
 	imgTitle_ = LoadGraph((Application::PATH_IMAGE + "ppap.png").c_str());
 
 	pauseMenu_ = new PauseMenu();
-
 	state_ = PauseMenu::MENU_STATE::CONFIRM;
+
+	// タイトル用（大）
+	fontTitle_ = CreateFontToHandle(
+		"ＭＳ ゴシック",
+		48,
+		4,
+		DX_FONTTYPE_ANTIALIASING_EDGE,
+		-1,
+		2
+	);
+
+	// 「Space/Aでスタート」用（中）
+	fontPress_ = CreateFontToHandle(
+		"ＭＳ ゴシック",
+		28,
+		3,
+		DX_FONTTYPE_ANTIALIASING_EDGE,
+		-1,
+		2
+	);
 }
+
 
 void TitleScene::Update(void)
 {
@@ -119,7 +139,15 @@ void TitleScene::Draw(void)
 #pragma endregion
 
 #pragma endregion
-	DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("Space/Aでスタート", strlen("Space?Aでスタート"))) / 2, Application::SCREEN_SIZE_Y - 30, "Space/Aでスタート", GetColor(255, 255, 255));
+	//DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("Space/Aでスタート", strlen("Space?Aでスタート"))) / 2, Application::SCREEN_SIZE_Y - 30, "Space/Aでスタート", GetColor(255, 255, 255));
+	const char* text = "Space/Aでスタート";
+
+	int w = GetDrawStringWidthToHandle(text, strlen(text), fontPress_);
+	int x = (Application::SCREEN_SIZE_X - w) / 2;
+	int y = Application::SCREEN_SIZE_Y - 60;
+
+	DrawStringToHandle(x, y, text, GetColor(255, 255, 255), fontPress_);
+
 
 	pauseMenu_->Draw();
 }

@@ -32,9 +32,16 @@ public:
 	virtual void Release(void) = 0;
 
 	void UpdateBase(void);
+
+	static void InitFonts();
+	static void ReleaseFonts();
 protected:
 	PauseMenu* pauseMenu_;
 	int rePress, newPress;
+
+	static int fontTitle_;
+	static int fontPress_;
+	static int fontUI_;
 
 	PauseMenu::MENU_STATE state_;
 };

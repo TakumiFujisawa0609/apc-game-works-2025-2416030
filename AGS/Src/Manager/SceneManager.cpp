@@ -1,5 +1,6 @@
 #include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
+#include "../Scene/SceneBase.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/GameOver.h"
 #include "../Scene/GameClear.h"
@@ -60,6 +61,8 @@ void SceneManager::Init(void)
 	rePress = newPress = 0;
 
 	isPause_ = false;
+
+	SceneBase::InitFonts();
 }
 
 void SceneManager::Init3D(void)
@@ -77,6 +80,8 @@ void SceneManager::Init3D(void)
 	SetUseBackCulling(false);
 
 	// ライトの設定
+	SetUseLighting(TRUE); // ← これを有効に！
+	SetLightEnable(TRUE); // ← これもセットで！
 	SetUseLighting(TRUE);   // ライティング自体は有効
 
 	light_->InitPointLight();
@@ -155,11 +160,12 @@ void SceneManager::Draw(void)
 	fader_->Draw();
 
 	light_->DrawLight();
-	
 }
 
 void SceneManager::Destroy(void)
 {
+	SceneBase::ReleaseFonts();
+
 	// シーンの解放
 	scene_->Release();
 	delete scene_;
@@ -172,7 +178,6 @@ void SceneManager::Destroy(void)
 	light_->DeleteLight();
 	delete light_;
 
-	// インスタンスのメモリ解放
 	delete instance_;
 }
 
@@ -205,7 +210,7 @@ float SceneManager::GetDeltaTime(void) const
 
 void SceneManager::SetCameraNear(float ne)
 {
-	camera_->SetFarClip(ne);
+	SetFogStartEnd(0, ne);
 }
 
 SceneManager::SceneManager(void)

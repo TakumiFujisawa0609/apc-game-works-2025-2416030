@@ -25,4 +25,7 @@ private:
 	// ‰æ‘œ
 	int imgTitle_;
 
+	int fontTitle_;
+	int fontPress_;
+
 };

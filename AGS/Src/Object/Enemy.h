@@ -70,6 +70,8 @@ private:
 	// モデルのハンドルID
 	int modelId_;
 
+	int footSoundHandle_;
+
 	// 座標
 	VECTOR pos_;
 

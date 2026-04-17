@@ -28,57 +28,7 @@ void Light::InitPointLight()
 
 void Light::UpdateLight(void)
 {
-	//if (lightPow_ < 0.01f)
-	//{
-	//	// èôÅXÇ…à√Ç≠
-	//	lightPow_ += 0.00004f * GetDeltaTime();
-	//}
-	//else
-	//{
-	//	// ê^Ç¡à√
-	//	lightPow_ = 0.08f;
-	//	camera_->SetFarClip(100.0f);
-	//}
-
-	//float pow = lightPow_;
-
-	//{
-	//	LightInfo& L = lights_[0];
-
-	//	SetLightPositionHandle(L.handle, pointLightPos_);
-
-	//	// GetColorF(r,g,b) Ç≈OK
-	//	auto col = GetColorF(pow, pow, pow, 1.0f);
-
-	//	SetLightDifColorHandle(L.handle, col);
-	//	SetLightSpcColorHandle(L.handle, col);
-
-	//	if (!L.isActive)
-	//	{
-	//		SetLightEnableHandle(L.handle, TRUE);
-	//		L.isActive = true;
-	//	}
-	//}
-
-	//{
-	//	LightInfo& L = lights_[1];
-
-	//	SetLightPositionHandle(L.handle, pointLightPos_);
-
-	//	//float pow2 = pow * 0.6f;
-	//	auto col = GetColorF(pow2, pow2, pow2, 1.0f);
-
-	//	SetLightDifColorHandle(L.handle, col);
-	//	SetLightSpcColorHandle(L.handle, col);
-
-	//	if (!L.isActive)
-	//	{
-	//		SetLightEnableHandle(L.handle, TRUE);
-	//		L.isActive = true;
-	//	}
-	//}
-
-	bool allInactive = true;
+	bool allInActive = true;
 
 	for (auto& L : lights_)
 	{
@@ -87,7 +37,7 @@ void Light::UpdateLight(void)
 			// èôÅXÇ…à√Ç≠
 			L.lightPow += minusLight * SceneManager::GetInstance().GetDeltaTime();
 
-			allInactive = false;
+			allInActive = false;
 		}
 		else
 		{
@@ -113,7 +63,7 @@ void Light::UpdateLight(void)
 	}
 
 	// ìÒÇ¬Ç∆Ç‡à√Ç¢Ç©
-	if (allInactive)
+	if (allInActive)
 	{
 		SceneManager::GetInstance().SetCameraNear(100.0f);
 	}

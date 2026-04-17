@@ -31,6 +31,7 @@ int WINAPI WinMain(
 		// ‰ğ•ú¸”s
 		return -1;
 	}
+	instance.DeleteInstance();
 
 	return 0;
 

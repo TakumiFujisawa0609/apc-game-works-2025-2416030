@@ -289,8 +289,8 @@ bool GameScene::EnemyCollision(void)
 void GameScene::CircleCollisionSet(void)
 {
 	// 接地
-	//sceneMana.SetPointLightPos(circlePos_);
 	SceneManager::GetInstance().GetLight().IsPointLightPow(circlePos_);
+
 	enemy_->SetTargetPos(circlePos_);
 	isCollision_ = true;
 	SceneManager::GetInstance().GetCamera().SetFarClip(1800.0f);

@@ -2,6 +2,10 @@
 #include "PauseMenu.h"
 #include "SceneBase.h"
 
+int SceneBase::fontTitle_ = -1;
+int SceneBase::fontPress_ = -1;
+int SceneBase::fontUI_ = -1;
+
 SceneBase::SceneBase(void)
 {
 }
@@ -60,4 +64,29 @@ void SceneBase::UpdateBase(void)
 	}
 
 	Update();
+}
+
+void SceneBase::InitFonts()
+{
+	fontTitle_ = CreateFontToHandle(
+		"ÇlÇr ÉSÉVÉbÉN", 48, 4,
+		DX_FONTTYPE_ANTIALIASING_EDGE, -1, 2
+	);
+
+	fontPress_ = CreateFontToHandle(
+		"ÉÅÉCÉäÉI", 28, 3,
+		DX_FONTTYPE_ANTIALIASING_EDGE, -1, 2
+	);
+
+	fontUI_ = CreateFontToHandle(
+		"ÇlÇr ÉSÉVÉbÉN", 20, 2,
+		DX_FONTTYPE_ANTIALIASING_EDGE, -1, 1
+	);
+}
+
+void SceneBase::ReleaseFonts()
+{
+	DeleteFontToHandle(fontTitle_);
+	DeleteFontToHandle(fontPress_);
+	DeleteFontToHandle(fontUI_);
 }
