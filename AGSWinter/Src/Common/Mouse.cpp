@@ -51,9 +51,6 @@ void Mouse::Updata()
 			DrawX = ClickX;
 			DrawY = ClickY;
 
-			//mousePos_.x = ClickX;
-			//mousePos_.y = ClickY;
-
 			// 四角形の色を押された場合は白に、離された場合は紫にする
 			DrawColor = LogType == MOUSE_INPUT_LOG_DOWN ? GetColor(255, 255, 255) : GetColor(255, 0, 255);
 		}
@@ -62,8 +59,6 @@ void Mouse::Updata()
 
 void Mouse::Draw()
 {
-	//DrawBox(15, 15, 200, 200, GetColor(255, 255, 255) , false);
-
 	// 描画するかどうかのフラグが立っていたら、マウスの左ボタンが押されたり離されたりした座標に小さい四角形を描画する
 	if (DrawFlag == TRUE)
 	{
